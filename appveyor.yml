@@ -1,0 +1,19 @@
+environment:
+  matrix:
+    - PYTHON: "C:\\Python36\\python.exe"
+      PIP: "C:\\Python36\\Scripts\\pip.exe"
+      SCRIPTS: "C:\\Python36\\Scripts\\"
+  TWINE_USERNAME: pyrundec
+  # skip Python versions prior to 3.5 since C++11 features don't work
+  CIBW_SKIP: "cp27-win* cp33-win* cp34-win*"
+
+build_script:
+  - "%PIP% install cibuildwheel==0.6.0"
+  - "%SCRIPTS%cibuildwheel --output-dir wheelhouse"
+  # upload to PyPI
+  - "%PYTHON% -m pip install twine"
+  - "%PYTHON% -m twine upload wheelhouse\\*.whl"
+
+artifacts:
+  - path: "wheelhouse\\*.whl"
+    name: Wheels
