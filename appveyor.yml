@@ -10,9 +10,14 @@ environment:
 build_script:
   - "%PIP% install cibuildwheel==0.6.0"
   - "%SCRIPTS%cibuildwheel --output-dir wheelhouse"
-  # upload to PyPI
-  - "%PYTHON% -m pip install twine"
-  - "%PYTHON% -m twine upload wheelhouse\\*.whl"
+  # upload to PyPI, but only for tagged releases
+  - >
+    IF "%APPVEYOR_REPO_TAG%" == "true"
+    (
+    "%PYTHON% -m pip install twine"
+    &&
+    "%PYTHON% -m twine upload wheelhouse\\*.whl"
+    )
 
 artifacts:
   - path: "wheelhouse\\*.whl"

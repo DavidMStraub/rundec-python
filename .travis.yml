@@ -21,6 +21,9 @@ env:
 script:
   - pip install cibuildwheel==0.6.0
   - cibuildwheel --output-dir wheelhouse
-  # upload to PyPI
-  - python -m pip install twine
-  - python -m twine upload wheelhouse/*.whl
+  # upload to PyPI, but only for tagged releases
+  - |
+    if [[ $TRAVIS_TAG ]]; then
+      python -m pip install twine
+      python -m twine upload wheelhouse/*.whl
+    fi
