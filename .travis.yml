@@ -1,23 +1,22 @@
 matrix:
   include:
-    - sudo: required
-      language: python
-      services:
-        - docker
-      env:
-        - "PYTHON=python3"
-        - CIBW_BEFORE_BUILD="sudo apt-get install -y swig""
-      before_install:
-        - sudo apt-get -qq update
-        - sudo apt-get install -y python3-pip
-    - os: osx
-      env:
-        - "PYTHON=python3"
-        - CIBW_BEFORE_BUILD="brew install swig""
-      before_install:
-        - brew update
-        - brew install python3
+  - sudo: required
+    language: python
+    services:
+    - docker
+    env:
+    - PYTHON=python3
+  - os: osx
+    env:
+    - PYTHON=python3
+
+env:
+  global:
+    - TWINE_USERNAME=pyrundec
+      # Note: TWINE_PASSWORD is set in Travis settings
 
 script:
   - pip install cibuildwheel==0.6.0
   - cibuildwheel --output-dir wheelhouse
+  - python -m pip install twine
+  - python -m twine upload wheelhouse/*.whl

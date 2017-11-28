@@ -1,8 +1,7 @@
 from setuptools import setup, Extension, find_packages
 
 ext_mod = Extension("_rundec",
-                    sources=["rundec.i", "CRunDec3/CRunDec.cpp"],
-                    swig_opts=['-c++'],
+                    sources=["_rundec.cc", "CRunDec3/CRunDec.cpp"],
                     )
 
 setup(name="rundec",
