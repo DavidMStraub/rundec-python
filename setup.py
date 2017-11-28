@@ -5,7 +5,7 @@ ext_mod = Extension("_rundec",
                     )
 
 setup(name="rundec",
-      version="0.1",
+      version="0.3",
       author="David M. Straub",
       author_email="david.straub@tum.de",
       url="https://github.com/DavidMStraub/rundec-python",
