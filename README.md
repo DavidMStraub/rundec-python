@@ -2,14 +2,14 @@
 
 `CRunDec` is "a C++ program for the running and decoupling of the strong coupling constant and quark masses", developed by Florian Herren and Matthias Steinhauser. Relevant references:
 
-- Version 3 of RunDec and CRunDec
-By Florian Herren, Matthias Steinhauser
+- "Version 3 of RunDec and CRunDec",
+Florian Herren, Matthias Steinhauser
 [arXiv:1703.03751](https://arxiv.org/abs/1703.03751)
-- CRunDec: a C++ package for running and decoupling of the strong coupling and quark masses
-By Barbara Schmidt, Matthias Steinhauser
+- "CRunDec: a C++ package for running and decoupling of the strong coupling and quark masses",
+Barbara Schmidt, Matthias Steinhauser
 [arXiv:1201.6149](https://arxiv.org/abs/1201.6149)
-- RunDec: A Mathematica package for running and decoupling of the strong coupling and quark masses
-By K.G. Chetyrkin, Johann H. Kühn, M. Steinhauser
+- "RunDec: A Mathematica package for running and decoupling of the strong coupling and quark masses",
+K.G. Chetyrkin, Johann H. Kühn, M. Steinhauser
 [arXiv:hep-ph/0004189](https://arxiv.org/abs/hep-ph/0004189)
 
 [Source code of CRunDec 3.0](https://www.ttp.kit.edu/preprints/2017/ttp17-011)
@@ -29,7 +29,7 @@ The API is analogous to `CRunDec`, see [the documentation](https://arxiv.org/abs
 ```python
 import rundec
 
-crd = rundec.CRunDec
+crd = rundec.CRunDec()
 
 # compute alpha_s at the b quark mass scale with 3-loop accuracy
 crd.AlphasExact(0.1185, 91.1876, 4.18, 5, 3)
