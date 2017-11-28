@@ -1,0 +1,23 @@
+matrix:
+  include:
+    - sudo: required
+      language: python
+      services:
+        - docker
+      env:
+        - "PYTHON=python3"
+        - CIBW_BEFORE_BUILD="sudo apt-get install -y swig""
+      before_install:
+        - sudo apt-get -qq update
+        - sudo apt-get install -y python3-pip
+    - os: osx
+      env:
+        - "PYTHON=python3"
+        - CIBW_BEFORE_BUILD="brew install swig""
+      before_install:
+        - brew update
+        - brew install python3
+
+script:
+  - pip install cibuildwheel==0.6.0
+  - cibuildwheel --output-dir wheelhouse
