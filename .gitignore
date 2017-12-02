@@ -6,6 +6,3 @@ build
 dist
 *.so
 __pycache__
-
-rundec.py
-rundec_wrap.cpp
