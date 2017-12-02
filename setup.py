@@ -1,4 +1,4 @@
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension
 
 ext_mod = Extension("_rundec",
                     sources=["_rundec.cc", "CRunDec3/CRunDec.cpp"],
@@ -16,6 +16,6 @@ setup(name="rundec",
       Florian Herren and Matthias Steinhauser. This Python package
       provides a thin wrapper around `CRunDec` generated with SWIG.""",
       license="GPLv3",
-      packages=find_packages(),
+      py_modules=['rundec'],
       ext_modules=[ext_mod],
       )
