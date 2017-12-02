@@ -7,6 +7,7 @@ matrix:
     env:
     - PYTHON=python3
   - os: osx
+    osx_image: xcode7.3
     env:
     - PYTHON=python3
 
@@ -19,11 +20,8 @@ env:
       # Note: TWINE_PASSWORD is set in Travis settings
 
 script:
-  - pip install cibuildwheel==0.6.0
+  - python -m pip install cibuildwheel==0.6.0
   - cibuildwheel --output-dir wheelhouse
   # upload to PyPI, but only for tagged releases
-  - |
-    if [[ $TRAVIS_TAG ]]; then
-      python -m pip install twine
-      python -m twine upload wheelhouse/*.whl
-    fi
+  - python -m pip install twine
+  - python -m twine upload wheelhouse/*.whl
