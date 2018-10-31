@@ -8,7 +8,7 @@ environment:
   CIBW_SKIP: "cp27-win* cp33-win* cp34-win*"
 
 build_script:
-  - "%PIP% install cibuildwheel==0.6.0"
+  - "%PIP% install cibuildwheel==0.10.0"
   - "%SCRIPTS%cibuildwheel --output-dir wheelhouse"
   # upload to PyPI, but only for tagged releases
   - >
