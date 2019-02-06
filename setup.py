@@ -15,7 +15,7 @@ setup(name="rundec",
       long_description="""`CRunDec` is a C++ program developed by
       Florian Herren and Matthias Steinhauser. This Python package
       provides a thin wrapper around `CRunDec` generated with SWIG.""",
-      license="GPLv3",
+      license="MIT",
       py_modules=['rundec'],
       ext_modules=[ext_mod],
       )
