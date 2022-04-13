@@ -15,6 +15,7 @@ jobs:
 
     env:
       CIBW_SKIP: pp*
+      CIBW_ARCHS_MACOS: x86_64 arm64
 
     steps:
       - uses: actions/checkout@v2
