@@ -12,7 +12,7 @@ Barbara Schmidt, Matthias Steinhauser
 K.G. Chetyrkin, Johann H. Kühn, M. Steinhauser
 [arXiv:hep-ph/0004189](https://arxiv.org/abs/hep-ph/0004189)
 
-[Source code of CRunDec 3.0](https://www.ttp.kit.edu/preprints/2017/ttp17-011)
+[Source code of CRunDec 3.1](https://www.ttp.kit.edu/preprints/2017/ttp17-011)
 
 `rundec-python` is a Python package providing a thin wrapper around `CRunDec`.
 
@@ -36,6 +36,12 @@ crd.AlphasExact(0.1185, 91.1876, 4.18, 5, 3)
 
 # compute the b quark pole mass using the 2-loop conversion from the MSbar mass
 crd.mMS2mOS(4.18, None,  0.26, 4.18, 5, 2)
+
+# compute the b quark kinetic mass using the 3-loop conversion from the MSbar mass
+mcMS = rundec.PairDouble()
+mcMS.first  = 0.993
+mcMS.second = 3.
+crd.mMS2mKIN(4.163, mcMS,  0.225, 4.163, 1, 3, 1)
 ```
 
 ## Technical details

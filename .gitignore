@@ -1,6 +1,7 @@
 .directory
 .ropeproject
 .ipynb_checkpoints
+.vscode
 build
 *.egg-info
 dist
