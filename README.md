@@ -48,6 +48,6 @@ crd.mMS2mKIN(4.163, mcMS,  0.225, 4.163, 1, 3, 1)
 
 The wrapper was generated with [SWIG](http://www.swig.org/).
 
-Binary wheels are provided via [PyPI](https://pypi.python.org/pypi/rundec) for Linux and Mac OS (built on [Travis CI](https://travis-ci.org/)) and for Windows (built on [AppVeyor](https://www.appveyor.com/)).
+Binary wheels are provided via [PyPI](https://pypi.python.org/pypi/rundec) for Linux, macOS, and Windows (built with [GitHub Actions](https://github.com/features/actions)).
 
-The Windows wheels require Python 3.5+, on Linux and Mac OS Python 2.7+ is sufficient.
+The Windows wheels require Python 3.5+, on Linux and macOS Python 2.7+ is sufficient.
