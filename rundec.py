@@ -58,6 +58,66 @@ class _SwigNonDynamicMeta(type):
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
+class SwigPyIterator(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _rundec.delete_SwigPyIterator
+
+    def value(self):
+        return _rundec.SwigPyIterator_value(self)
+
+    def incr(self, n=1):
+        return _rundec.SwigPyIterator_incr(self, n)
+
+    def decr(self, n=1):
+        return _rundec.SwigPyIterator_decr(self, n)
+
+    def distance(self, x):
+        return _rundec.SwigPyIterator_distance(self, x)
+
+    def equal(self, x):
+        return _rundec.SwigPyIterator_equal(self, x)
+
+    def copy(self):
+        return _rundec.SwigPyIterator_copy(self)
+
+    def next(self):
+        return _rundec.SwigPyIterator_next(self)
+
+    def __next__(self):
+        return _rundec.SwigPyIterator___next__(self)
+
+    def previous(self):
+        return _rundec.SwigPyIterator_previous(self)
+
+    def advance(self, n):
+        return _rundec.SwigPyIterator_advance(self, n)
+
+    def __eq__(self, x):
+        return _rundec.SwigPyIterator___eq__(self, x)
+
+    def __ne__(self, x):
+        return _rundec.SwigPyIterator___ne__(self, x)
+
+    def __iadd__(self, n):
+        return _rundec.SwigPyIterator___iadd__(self, n)
+
+    def __isub__(self, n):
+        return _rundec.SwigPyIterator___isub__(self, n)
+
+    def __add__(self, n):
+        return _rundec.SwigPyIterator___add__(self, n)
+
+    def __sub__(self, *args):
+        return _rundec.SwigPyIterator___sub__(self, *args)
+    def __iter__(self):
+        return self
+
+# Register SwigPyIterator in _rundec:
+_rundec.SwigPyIterator_swigregister(SwigPyIterator)
 class PairDouble(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -84,6 +144,157 @@ class PairDouble(object):
 
 # Register PairDouble in _rundec:
 _rundec.PairDouble_swigregister(PairDouble)
+class PairDoubleVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self):
+        return _rundec.PairDoubleVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self):
+        return _rundec.PairDoubleVector___nonzero__(self)
+
+    def __bool__(self):
+        return _rundec.PairDoubleVector___bool__(self)
+
+    def __len__(self):
+        return _rundec.PairDoubleVector___len__(self)
+
+    def __getslice__(self, i, j):
+        return _rundec.PairDoubleVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args):
+        return _rundec.PairDoubleVector___setslice__(self, *args)
+
+    def __delslice__(self, i, j):
+        return _rundec.PairDoubleVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args):
+        return _rundec.PairDoubleVector___delitem__(self, *args)
+
+    def __getitem__(self, *args):
+        return _rundec.PairDoubleVector___getitem__(self, *args)
+
+    def __setitem__(self, *args):
+        return _rundec.PairDoubleVector___setitem__(self, *args)
+
+    def pop(self):
+        return _rundec.PairDoubleVector_pop(self)
+
+    def append(self, x):
+        return _rundec.PairDoubleVector_append(self, x)
+
+    def empty(self):
+        return _rundec.PairDoubleVector_empty(self)
+
+    def size(self):
+        return _rundec.PairDoubleVector_size(self)
+
+    def swap(self, v):
+        return _rundec.PairDoubleVector_swap(self, v)
+
+    def begin(self):
+        return _rundec.PairDoubleVector_begin(self)
+
+    def end(self):
+        return _rundec.PairDoubleVector_end(self)
+
+    def rbegin(self):
+        return _rundec.PairDoubleVector_rbegin(self)
+
+    def rend(self):
+        return _rundec.PairDoubleVector_rend(self)
+
+    def clear(self):
+        return _rundec.PairDoubleVector_clear(self)
+
+    def get_allocator(self):
+        return _rundec.PairDoubleVector_get_allocator(self)
+
+    def pop_back(self):
+        return _rundec.PairDoubleVector_pop_back(self)
+
+    def erase(self, *args):
+        return _rundec.PairDoubleVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _rundec.PairDoubleVector_swiginit(self, _rundec.new_PairDoubleVector(*args))
+
+    def push_back(self, x):
+        return _rundec.PairDoubleVector_push_back(self, x)
+
+    def front(self):
+        return _rundec.PairDoubleVector_front(self)
+
+    def back(self):
+        return _rundec.PairDoubleVector_back(self)
+
+    def assign(self, n, x):
+        return _rundec.PairDoubleVector_assign(self, n, x)
+
+    def resize(self, *args):
+        return _rundec.PairDoubleVector_resize(self, *args)
+
+    def insert(self, *args):
+        return _rundec.PairDoubleVector_insert(self, *args)
+
+    def reserve(self, n):
+        return _rundec.PairDoubleVector_reserve(self, n)
+
+    def capacity(self):
+        return _rundec.PairDoubleVector_capacity(self)
+    __swig_destroy__ = _rundec.delete_PairDoubleVector
+
+# Register PairDoubleVector in _rundec:
+_rundec.PairDoubleVector_swigregister(PairDoubleVector)
+class TriplenfMmuArray(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _rundec.TriplenfMmuArray_swiginit(self, _rundec.new_TriplenfMmuArray(nelements))
+    __swig_destroy__ = _rundec.delete_TriplenfMmuArray
+
+    def __getitem__(self, index):
+        return _rundec.TriplenfMmuArray___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _rundec.TriplenfMmuArray___setitem__(self, index, value)
+
+    def cast(self):
+        return _rundec.TriplenfMmuArray_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _rundec.TriplenfMmuArray_frompointer(t)
+
+# Register TriplenfMmuArray in _rundec:
+_rundec.TriplenfMmuArray_swigregister(TriplenfMmuArray)
+class RunDecPairArray(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, nelements):
+        _rundec.RunDecPairArray_swiginit(self, _rundec.new_RunDecPairArray(nelements))
+    __swig_destroy__ = _rundec.delete_RunDecPairArray
+
+    def __getitem__(self, index):
+        return _rundec.RunDecPairArray___getitem__(self, index)
+
+    def __setitem__(self, index, value):
+        return _rundec.RunDecPairArray___setitem__(self, index, value)
+
+    def cast(self):
+        return _rundec.RunDecPairArray_cast(self)
+
+    @staticmethod
+    def frompointer(t):
+        return _rundec.RunDecPairArray_frompointer(t)
+
+# Register RunDecPairArray in _rundec:
+_rundec.RunDecPairArray_swigregister(RunDecPairArray)
 class RunDec_values(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -120,6 +331,18 @@ class TriplenfMmu(object):
 _rundec.TriplenfMmu_swigregister(TriplenfMmu)
 cvar = _rundec.cvar
 
+class RunDecPair(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    first = property(_rundec.RunDecPair_first_get, _rundec.RunDecPair_first_set)
+    second = property(_rundec.RunDecPair_second_get, _rundec.RunDecPair_second_set)
+
+    def __init__(self):
+        _rundec.RunDecPair_swiginit(self, _rundec.new_RunDecPair())
+    __swig_destroy__ = _rundec.delete_RunDecPair
+
+# Register RunDecPair in _rundec:
+_rundec.RunDecPair_swigregister(RunDecPair)
 class AsmMS(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr

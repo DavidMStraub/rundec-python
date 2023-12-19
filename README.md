@@ -34,11 +34,19 @@ crd = rundec.CRunDec()
 # compute alpha_s at the b quark mass scale with 3-loop accuracy
 crd.AlphasExact(0.1185, 91.1876, 4.18, 5, 3)
 
-# compute the b quark pole mass using the 2-loop conversion from the MSbar mass
-crd.mMS2mOS(4.18, None,  0.26, 4.18, 5, 2)
+# compute the b quark pole mass using the 4-loop conversion from the MSbar mass without charm mass effects
+crd.mMS2mOS(4.18, None,  0.26, 4.18, 5, 4)
+
+# compute the b quark pole mass using the 4-loop conversion from the MSbar mass with finite charm mass effects
+mq = rundec.RunDecPairArray(4)
+mcMS = rundec.RunDecPair()
+mcMS.first  = 0.993
+mcMS.second = 3.
+mq[0] = mcMS
+crd.mMS2mOS(4.18, mq,  0.26, 4.18, 5, 4)
 
 # compute the b quark kinetic mass using the 3-loop conversion from the MSbar mass
-mcMS = rundec.PairDouble()
+mcMS = rundec.RunDecPair()
 mcMS.first  = 0.993
 mcMS.second = 3.
 crd.mMS2mKIN(4.163, mcMS,  0.225, 4.163, 1, 3, 1)
