@@ -1,8 +1,10 @@
 .directory
 .ropeproject
 .ipynb_checkpoints
+.vscode
 build
 *.egg-info
 dist
 *.so
 __pycache__
+simple_test.py

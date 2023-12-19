@@ -1,11 +1,11 @@
 from setuptools import setup, Extension
 
 ext_mod = Extension("_rundec",
-                    sources=["_rundec.cc", "CRunDec3/CRunDec.cpp"],
+                    sources=["_rundec.cc", "CRunDec3/CRunDec.3.1.cpp"],
                     )
 
 setup(name="rundec",
-      version="0.5.2",
+      version="0.6",
       author="David M. Straub",
       author_email="david.straub@tum.de",
       url="https://github.com/DavidMStraub/rundec-python",
@@ -18,4 +18,5 @@ setup(name="rundec",
       license="MIT",
       py_modules=['rundec'],
       ext_modules=[ext_mod],
+      extras_require={'testing': ['pytest']},
       )
