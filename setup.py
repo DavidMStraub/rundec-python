@@ -18,4 +18,5 @@ setup(name="rundec",
       license="MIT",
       py_modules=['rundec'],
       ext_modules=[ext_mod],
+      extras_require={'testing': ['pytest']},
       )
