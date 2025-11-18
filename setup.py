@@ -21,4 +21,5 @@ setup(name="rundec",
       py_modules=['rundec'],
       ext_modules=[ext_mod],
       extras_require={'testing': ['pytest']},
+      options={'bdist_wheel': {'py_limited_api': 'cp310'}},
       )
