@@ -58,4 +58,4 @@ The wrapper was generated with [SWIG](http://www.swig.org/).
 
 Binary wheels are provided via [PyPI](https://pypi.python.org/pypi/rundec) for Linux, macOS, and Windows (built with [GitHub Actions](https://github.com/features/actions)).
 
-The Windows wheels require Python 3.5+, on Linux and macOS Python 2.7+ is sufficient.
+Python 3.10+ is supported.
