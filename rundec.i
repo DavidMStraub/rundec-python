@@ -1,5 +1,9 @@
 %module rundec
 
+%begin %{
+#define Py_LIMITED_API 0x03050000
+%}
+
 %{
 #include <stdlib.h>
 #include <utility>
