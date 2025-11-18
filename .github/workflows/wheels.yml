@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   build_wheels:
@@ -17,6 +18,9 @@ jobs:
       CIBW_SKIP: pp*
       CIBW_ARCHS_MACOS: x86_64 arm64
       CIBW_ARCHS_LINUX: x86_64 aarch64
+      # Build only for Python 3.10 since we're using stable ABI
+      # The resulting abi3 wheels will work for Python 3.10+
+      CIBW_BUILD: cp310-*
 
     steps:
       - uses: actions/checkout@v2
@@ -42,6 +46,8 @@ jobs:
   upload_pypi:
     needs: [build_wheels]
     runs-on: ubuntu-latest
+    # Only upload to PyPI on pushes to master, not on PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/download-artifact@v4
         with:
