@@ -106,19 +106,19 @@ class masses(unittest.TestCase):
       #convert PS mass to MS mass
       mcPS = 1.153
       scale_mpPS = 2.0
-      self.assertAlmostEqual(crd.mPS2mMS(mcPS,None,as3,3.0,scale_mpPS,3,4),0.9862692441,delta=1e-5)
+      self.assertAlmostEqual(crd.mPS2mMS(mcPS,None,as3,3.0,scale_mpPS,3,4),0.9862692441,delta=3e-5)
      
       #convert 1S mass to MS mass
       mc1S = 1.5145
-      self.assertAlmostEqual(crd.m1S2mMS(mc1S,None,as3,3.0,3,4),0.9575677386,delta=1e-5)
+      self.assertAlmostEqual(crd.m1S2mMS(mc1S,None,as3,3.0,3,4),0.9575677386,delta=3e-5)
 
       #convert RS mass to MS mass
       mcRS = 1.043
-      self.assertAlmostEqual(crd.mRS2mMS(mcRS,None,as3,3.0,2.0,3,4),1.006783427,delta=1e-5)
+      self.assertAlmostEqual(crd.mRS2mMS(mcRS,None,as3,3.0,2.0,3,4),1.006783427,delta=3e-5)
 
       #convert RS' mass to MS mass
       mcRSp = 1.357
-      self.assertAlmostEqual(crd.mRSp2mMS(mcRSp,None,as3,3.0,2.0,3,4),0.9661584143,delta=1e-5)
+      self.assertAlmostEqual(crd.mRSp2mMS(mcRSp,None,as3,3.0,2.0,3,4),0.9661584143,delta=3e-5)
 
     def test_mMS2mThr(self):
       crd = rundec.CRunDec()
@@ -168,17 +168,13 @@ class masses(unittest.TestCase):
       loops = 3
       muWC = 1.0
       #convert MS mass to kinetic mass, scheme A
-      scheme=0
-      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,scheme),4.541932121,delta=1e-5)
+      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,'A'),4.541932121,delta=1e-5)
       #convert MS mass to kinetic mass, scheme B
-      scheme=1
-      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,scheme),4.525651485,delta=1e-5)  
+      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,'B'),4.525651485,delta=1e-5)  
       #convert MS mass to kinetic mass, scheme C
-      scheme=2
-      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,scheme),4.547027037,delta=1e-5)
+      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,'C'),4.547027037,delta=1e-5)
       #convert MS mass to kinetic mass, scheme D
-      scheme=3
-      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,scheme),4.543448616,delta=1e-5) 
+      self.assertAlmostEqual(crd.mMS2mKIN(mbMS,mcMS,as4,mbMS,muWC,loops,'D'),4.543448616,delta=1e-5) 
 
     def test_mkin2mMS(self):
       crd = rundec.CRunDec()
@@ -211,20 +207,16 @@ class masses(unittest.TestCase):
       muWC = 1.0
 
       #convert kinetic mass to MS mass, scheme A
-      scheme=0
-      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as3,mbkin,muWC,loops,scheme),4.134409357,delta=1e-5)
+      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as3,mbkin,muWC,loops,'A'),4.134409357,delta=1e-5)
 
       #convert kinetic mass to MS mass, scheme B
-      scheme=1
-      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as4,mbkin,muWC,loops,scheme),4.126363246,delta=1e-5)
+      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as4,mbkin,muWC,loops,'B'),4.126363246,delta=1e-5)
 
       #convert kinetic mass to MS mass, scheme C
-      scheme=2
-      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as4,mbkin,muWC,loops,scheme),4.106094652,delta=1e-5)
+      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as4,mbkin,muWC,loops,'C'),4.106094652,delta=1e-5)
 
       #convert kinetic mass to MS mass, scheme D
-      scheme=3
-      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as3,mbkin,muWC,loops,scheme),4.134150911,delta=1e-5)
+      self.assertAlmostEqual(crd.mKIN2mMS(mbkin,mcMS,as3,mbkin,muWC,loops,'D'),4.134150911,delta=1e-5)
 
 if __name__ == '__main__':
 

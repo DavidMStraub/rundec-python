@@ -1,7 +1,8 @@
 from setuptools import setup, Extension
 
 ext_mod = Extension("_rundec",
-                    sources=["_rundec.cc", "CRunDec3/CRunDec.3.1.cpp"],
+                    sources=["_rundec.cc", "CRunDec3/CRunDec.cpp"],
+                    include_dirs=["CRunDec3"],
                     define_macros=[('Py_LIMITED_API', '0x030A0000')],
                     py_limited_api=True,
                     )

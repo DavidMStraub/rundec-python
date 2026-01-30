@@ -3381,7 +3381,13 @@ namespace swig {
 #include <stdlib.h>
 #include <utility>
 
-#include "CRunDec3/CRunDec.3.1.h"
+#include "CRunDec3/CRunDec.h"
+
+// Define RunDecPair as typedef for compatibility
+typedef std::pair<double,double> RunDecPair;
+
+
+#include <string>
 
 
 #include <typeinfo>
@@ -3393,9 +3399,6 @@ namespace swig {
 #     define SWIG_STD_NOMODERN_STL
 #  endif
 #endif
-
-
-#include <string>
 
 
 #include <stddef.h>
@@ -3901,9 +3904,6 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 #include <vector>
 
 
-  #define SWIG_From_double   PyFloat_FromDouble 
-
-
 namespace swig {
   template <class Type>
   struct noconst_traits {
@@ -4181,191 +4181,6 @@ namespace swig {
 }
 
 
-namespace swig {
-  template <> struct traits< double > {
-    typedef value_category category;
-    static const char* type_name() { return"double"; }
-  };
-  template <>  struct traits_asval< double > {
-    typedef double value_type;
-    static int asval(PyObject *obj, value_type *val) {
-      return SWIG_AsVal_double (obj, val);
-    }
-  };
-  template <>  struct traits_from< double > {
-    typedef double value_type;
-    static PyObject *from(const value_type& val) {
-      return SWIG_From_double  (val);
-    }
-  };
-}
-
-
-  namespace swig {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    template <class T, class U >
-    struct traits_asptr<std::pair<T,U> >  {
-      typedef std::pair<T,U> value_type;
-
-      static int get_pair(PyObject* first, PyObject* second,
-			  std::pair<T,U> **val) 
-      {
-	if (val) {
-	  value_type *vp = (new std::pair<T,U>());
-	  T *pfirst = &(vp->first);
-	  int res1 = swig::asval((PyObject*)first, pfirst);
-	  if (!SWIG_IsOK(res1)) {
-	    delete vp;
-	    return res1;
-	  }
-	  U *psecond = &(vp->second);
-	  int res2 = swig::asval((PyObject*)second, psecond);
-	  if (!SWIG_IsOK(res2)) {
-	    delete vp;
-	    return res2;
-	  }
-	  *val = vp;
-	  return SWIG_AddNewMask(res1 > res2 ? res1 : res2);
-	} else {
-	  T *pfirst = 0;
-	  int res1 = swig::asval((PyObject*)first, pfirst);
-	  if (!SWIG_IsOK(res1)) return res1;
-	  U *psecond = 0;
-	  int res2 = swig::asval((PyObject*)second, psecond);
-	  if (!SWIG_IsOK(res2)) return res2;
-	  return res1 > res2 ? res1 : res2;
-	}
-      }
-
-      static int asptr(PyObject *obj, std::pair<T,U> **val) {
-	int res = SWIG_ERROR;
-	if (PyTuple_Check(obj)) {
-	  if (PyTuple_GET_SIZE(obj) == 2) {
-	    res = get_pair(PyTuple_GET_ITEM(obj,0),PyTuple_GET_ITEM(obj,1), val);
-	  }
-	} else if (PySequence_Check(obj)) {
-	  if (PySequence_Size(obj) == 2) {
-	    swig::SwigVar_PyObject first = PySequence_GetItem(obj,0);
-	    swig::SwigVar_PyObject second = PySequence_GetItem(obj,1);
-	    res = get_pair(first, second, val);
-	  }
-	} else {
-	  value_type *p = 0;
-	  swig_type_info *descriptor = swig::type_info<value_type>();
-	  res = descriptor ? SWIG_ConvertPtr(obj, (void **)&p, descriptor, 0) : SWIG_ERROR;
-	  if (SWIG_IsOK(res) && val)  *val = p;
-	}
-	return res;
-      }
-    };
-
-
-    template <class T, class U >
-    struct traits_from<std::pair<T,U> >   {
-      static PyObject *from(const std::pair<T,U>& val) {
-	PyObject* obj = PyTuple_New(2);
-	PyTuple_SetItem(obj,0,swig::from(val.first));
-	PyTuple_SetItem(obj,1,swig::from(val.second));
-	return obj;
-      }
-    };
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      namespace swig {
-	template <>  struct traits<std::pair< double, double > > {
-	  typedef pointer_category category;
-	  static const char* type_name() {
-	    return "std::pair<" "double" "," "double" " >";
-	  }
-	};
-      }
-    
-
 #if defined(__SUNPRO_CC) && defined(_RWSTD_VER)
 #  if !defined(SWIG_NO_STD_NOITERATOR_TRAITS_STL)
 #    define SWIG_STD_NOITERATOR_TRAITS_STL
@@ -4633,6 +4448,14 @@ namespace swig {
   }
 
 }
+
+
+  namespace swig {
+    template <>  struct traits< std::pair< double,double > > {
+      typedef pointer_category category;
+      static const char* type_name() { return"std::pair< double,double >"; }
+    };
+  }
 
 
 #include <functional>
@@ -5242,6 +5065,9 @@ SWIGINTERN std::vector< std::pair< double,double > >::iterator std_vector_Sl_std
 SWIGINTERN std::vector< std::pair< double,double > >::iterator std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg__insert__SWIG_0(std::vector< std::pair< double,double > > *self,std::vector< std::pair< double,double > >::iterator pos,std::vector< std::pair< double,double > >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg__insert__SWIG_1(std::vector< std::pair< double,double > > *self,std::vector< std::pair< double,double > >::iterator pos,std::vector< std::pair< double,double > >::size_type n,std::vector< std::pair< double,double > >::value_type const &x){ self->insert(pos, n, x); }
 
+  #define SWIG_From_double   PyFloat_FromDouble 
+
+
 typedef TriplenfMmu TriplenfMmuArray;
 
 SWIGINTERN TriplenfMmuArray *new_TriplenfMmuArray(size_t nelements){
@@ -5318,6 +5144,131 @@ SWIG_AsVal_bool (PyObject *obj, bool *val)
     return SWIG_ERROR;
   if (val) *val = r ? true : false;
   return SWIG_OK;
+}
+
+
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static swig_type_info* info = 0;
+  if (!info) {
+    info = SWIG_TypeQuery("_p_char");
+  }
+  return info;
+}
+
+
+/* Return string from Python obj. NOTE: obj must remain in scope in order
+   to use the returned cptr (but only when alloc is set to SWIG_OLDOBJ) */
+SWIGINTERN int
+SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
+{
+#if PY_VERSION_HEX>=0x03000000
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+  if (PyBytes_Check(obj))
+#else
+  if (PyUnicode_Check(obj))
+#endif
+#else  
+  if (PyString_Check(obj))
+#endif
+  {
+    char *cstr; Py_ssize_t len;
+    PyObject *bytes = NULL;
+    int ret = SWIG_OK;
+    if (alloc)
+      *alloc = SWIG_OLDOBJ;
+#if PY_VERSION_HEX>=0x03000000 && defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+    if (PyBytes_AsStringAndSize(obj, &cstr, &len) == -1)
+      return SWIG_TypeError;
+#else
+    cstr = (char *)SWIG_PyUnicode_AsUTF8AndSize(obj, &len, &bytes);
+    if (!cstr)
+      return SWIG_TypeError;
+    /* The returned string is only duplicated if the char * returned is not owned and memory managed by obj */
+    if (bytes && cptr) {
+      if (alloc) {
+        cstr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
+        *alloc = SWIG_NEWOBJ;
+      } else {
+        /* alloc must be set in order to clean up allocated memory */
+        return SWIG_RuntimeError;
+      }
+    }
+#endif
+    if (cptr) *cptr = cstr;
+    if (psize) *psize = len + 1;
+    SWIG_Py_XDECREF(bytes);
+    return ret;
+  } else {
+#if defined(SWIG_PYTHON_2_UNICODE)
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+#error "Cannot use both SWIG_PYTHON_2_UNICODE and SWIG_PYTHON_STRICT_BYTE_CHAR at once"
+#endif
+#if PY_VERSION_HEX<0x03000000
+    if (PyUnicode_Check(obj)) {
+      char *cstr; Py_ssize_t len;
+      if (!alloc && cptr) {
+        return SWIG_RuntimeError;
+      }
+      obj = PyUnicode_AsUTF8String(obj);
+      if (!obj)
+        return SWIG_TypeError;
+      if (PyString_AsStringAndSize(obj, &cstr, &len) != -1) {
+        if (cptr) {
+          if (alloc) *alloc = SWIG_NEWOBJ;
+          *cptr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
+        }
+        if (psize) *psize = len + 1;
+
+        SWIG_Py_XDECREF(obj);
+        return SWIG_OK;
+      } else {
+        SWIG_Py_XDECREF(obj);
+      }
+    }
+#endif
+#endif
+
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+      void* vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (char *) vptr;
+	if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+	if (alloc) *alloc = SWIG_OLDOBJ;
+	return SWIG_OK;
+      }
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsPtr_std_string (PyObject * obj, std::string **val) 
+{
+  char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
+  if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
+    if (buf) {
+      if (val) *val = new std::string(buf, size - 1);
+      if (alloc == SWIG_NEWOBJ) delete[] buf;
+      return SWIG_NEWOBJ;
+    } else {
+      if (val) *val = 0;
+      return SWIG_OLDOBJ;
+    }
+  } else {
+    PyErr_Clear();
+    static swig_type_info *descriptor = SWIG_TypeQuery("std::string" " *");
+    if (descriptor) {
+      std::string *vptr;
+      int res = SWIG_ConvertPtr(obj, (void**)&vptr, descriptor, 0);
+      if (SWIG_IsOK(res) && val) *val = vptr;
+      return res;
+    }
+  }
+  return SWIG_ERROR;
 }
 
 #ifdef __cplusplus
@@ -6164,267 +6115,6 @@ SWIGINTERN PyObject *SwigPyIterator_swigregister(PyObject *SWIGUNUSEDPARM(self),
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_new_PairDouble__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::pair< double,double > *)new std::pair< double,double >();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_PairDouble__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  double arg2 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  std::pair< double,double > *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_PairDouble" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_PairDouble" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  result = (std::pair< double,double > *)new std::pair< double,double >(arg1,arg2);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_PairDouble__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  std::pair< double,double > *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res1 = swig::asptr(swig_obj[0], &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_PairDouble" "', argument " "1"" of type '" "std::pair< double,double > const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_PairDouble" "', argument " "1"" of type '" "std::pair< double,double > const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  result = (std::pair< double,double > *)new std::pair< double,double >((std::pair< double,double > const &)*arg1);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_PairDouble(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[3] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_PairDouble", 0, 2, argv))) SWIG_fail;
-  --argc;
-  if (argc == 0) {
-    return _wrap_new_PairDouble__SWIG_0(self, argc, argv);
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = swig::asptr(argv[0], (std::pair< double,double >**)(0));
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_PairDouble__SWIG_2(self, argc, argv);
-    }
-  }
-  if (argc == 2) {
-    int _v = 0;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_double(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_new_PairDouble__SWIG_1(self, argc, argv);
-      }
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_PairDouble'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    std::pair< double,double >::pair()\n"
-    "    std::pair< double,double >::pair(double,double)\n"
-    "    std::pair< double,double >::pair(std::pair< double,double > const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_PairDouble_first_set(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "PairDouble_first_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDouble_first_set" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
-  }
-  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PairDouble_first_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->first = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_PairDouble_first_get(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDouble_first_get" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
-  }
-  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
-  result = (double) ((arg1)->first);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_PairDouble_second_set(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "PairDouble_second_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDouble_second_set" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
-  }
-  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PairDouble_second_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->second = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_PairDouble_second_get(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDouble_second_get" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
-  }
-  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
-  result = (double) ((arg1)->second);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_PairDouble(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_PairDouble" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
-  }
-  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
-  delete arg1;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *PairDouble_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj = NULL;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_double_double_t, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *PairDouble_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
 SWIGINTERN PyObject *_wrap_PairDoubleVector_iterator(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   std::vector< std::pair< double,double > > *arg1 = (std::vector< std::pair< double,double > > *) 0 ;
@@ -7034,7 +6724,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector___getitem____SWIG_1(PyObject *self, 
   } catch(std::out_of_range &_e) {
     SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
   }
-  resultobj = swig::from(static_cast< std::pair< double,double > >(*result));
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
   (void)swig::container_owner<swig::traits<std::vector< std::pair< double,double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj;
 fail:
@@ -7096,7 +6786,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector___setitem____SWIG_2(PyObject *self, 
   int res1 = 0 ;
   ptrdiff_t val2 ;
   int ecode2 = 0 ;
-  int res3 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -7110,27 +6801,22 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector___setitem____SWIG_2(PyObject *self, 
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PairDoubleVector___setitem__" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::difference_type""'");
   } 
   arg2 = static_cast< std::vector< std::pair< double,double > >::difference_type >(val2);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res3 = swig::asptr(swig_obj[2], &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg3 = ptr;
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp3);
   try {
     std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg____setitem____SWIG_2(arg1,SWIG_STD_MOVE(arg2),(std::pair< double,double > const &)*arg3);
   } catch(std::out_of_range &_e) {
     SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
   }
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -7183,7 +6869,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector___setitem__(PyObject *self, PyObject
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        int res = swig::asptr(argv[2], (std::pair< double,double >**)(0));
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
           return _wrap_PairDoubleVector___setitem____SWIG_2(self, argc, argv);
@@ -7223,7 +6909,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_pop(PyObject *self, PyObject *args) 
   } catch(std::out_of_range &_e) {
     SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
   }
-  resultobj = swig::from(static_cast< std::pair< double,double > >(result));
+  resultobj = SWIG_NewPointerObj((new std::vector< std::pair< double,double > >::value_type(result)), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -7236,7 +6922,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_append(PyObject *self, PyObject *arg
   std::vector< std::pair< double,double > >::value_type *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -7246,23 +6933,18 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_append(PyObject *self, PyObject *arg
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDoubleVector_append" "', argument " "1"" of type '" "std::vector< std::pair< double,double > > *""'"); 
   }
   arg1 = reinterpret_cast< std::vector< std::pair< double,double > > * >(argp1);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res2 = swig::asptr(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PairDoubleVector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg2 = ptr;
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PairDoubleVector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_append" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp2);
   std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg__append(arg1,(std::pair< double,double > const &)*arg2);
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -7755,7 +7437,8 @@ SWIGINTERN PyObject *_wrap_new_PairDoubleVector__SWIG_3(PyObject *self, Py_ssize
   std::vector< std::pair< double,double > >::value_type *arg2 = 0 ;
   size_t val1 ;
   int ecode1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
   std::vector< std::pair< double,double > > *result = 0 ;
   
   (void)self;
@@ -7765,23 +7448,18 @@ SWIGINTERN PyObject *_wrap_new_PairDoubleVector__SWIG_3(PyObject *self, Py_ssize
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_PairDoubleVector" "', argument " "1"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
   } 
   arg1 = static_cast< std::vector< std::pair< double,double > >::size_type >(val1);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res2 = swig::asptr(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_PairDoubleVector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_PairDoubleVector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg2 = ptr;
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_PairDoubleVector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_PairDoubleVector" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp2);
   result = (std::vector< std::pair< double,double > > *)new std::vector< std::pair< double,double > >(SWIG_STD_MOVE(arg1),(std::vector< std::pair< double,double > >::value_type const &)*arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__pairT_double_double_t_t, SWIG_POINTER_NEW |  0 );
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -7822,7 +7500,7 @@ SWIGINTERN PyObject *_wrap_new_PairDoubleVector(PyObject *self, PyObject *args) 
       _v = SWIG_CheckState(res);
     }
     if (_v) {
-      int res = swig::asptr(argv[1], (std::pair< double,double >**)(0));
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_new_PairDoubleVector__SWIG_3(self, argc, argv);
@@ -7847,7 +7525,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_push_back(PyObject *self, PyObject *
   std::vector< std::pair< double,double > >::value_type *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -7857,23 +7536,18 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_push_back(PyObject *self, PyObject *
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PairDoubleVector_push_back" "', argument " "1"" of type '" "std::vector< std::pair< double,double > > *""'"); 
   }
   arg1 = reinterpret_cast< std::vector< std::pair< double,double > > * >(argp1);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res2 = swig::asptr(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PairDoubleVector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg2 = ptr;
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PairDoubleVector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_push_back" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp2);
   (arg1)->push_back((std::vector< std::pair< double,double > >::value_type const &)*arg2);
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -7895,7 +7569,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_front(PyObject *self, PyObject *args
   }
   arg1 = reinterpret_cast< std::vector< std::pair< double,double > > * >(argp1);
   result = (std::vector< std::pair< double,double > >::value_type *) &((std::vector< std::pair< double,double > > const *)arg1)->front();
-  resultobj = swig::from(static_cast< std::pair< double,double > >(*result));
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
   (void)swig::container_owner<swig::traits<std::vector< std::pair< double,double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj;
 fail:
@@ -7920,7 +7594,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_back(PyObject *self, PyObject *args)
   }
   arg1 = reinterpret_cast< std::vector< std::pair< double,double > > * >(argp1);
   result = (std::vector< std::pair< double,double > >::value_type *) &((std::vector< std::pair< double,double > > const *)arg1)->back();
-  resultobj = swig::from(static_cast< std::pair< double,double > >(*result));
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
   (void)swig::container_owner<swig::traits<std::vector< std::pair< double,double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj;
 fail:
@@ -7937,7 +7611,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_assign(PyObject *self, PyObject *arg
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  int res3 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   PyObject *swig_obj[3] ;
   
   (void)self;
@@ -7952,23 +7627,18 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_assign(PyObject *self, PyObject *arg
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PairDoubleVector_assign" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
   } 
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res3 = swig::asptr(swig_obj[2], &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg3 = ptr;
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_assign" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp3);
   (arg1)->assign(SWIG_STD_MOVE(arg2),(std::vector< std::pair< double,double > >::value_type const &)*arg3);
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -7982,7 +7652,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_resize__SWIG_1(PyObject *self, Py_ss
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  int res3 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -7996,23 +7667,18 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_resize__SWIG_1(PyObject *self, Py_ss
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PairDoubleVector_resize" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
   } 
   arg2 = static_cast< std::vector< std::pair< double,double > >::size_type >(val2);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res3 = swig::asptr(swig_obj[2], &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg3 = ptr;
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_resize" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp3);
   (arg1)->resize(SWIG_STD_MOVE(arg2),(std::vector< std::pair< double,double > >::value_type const &)*arg3);
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -8049,7 +7715,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_resize(PyObject *self, PyObject *arg
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        int res = swig::asptr(argv[2], (std::pair< double,double >**)(0));
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
           return _wrap_PairDoubleVector_resize__SWIG_1(self, argc, argv);
@@ -8076,7 +7742,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert__SWIG_0(PyObject *self, Py_ss
   int res1 = 0 ;
   swig::SwigPyIterator *iter2 = 0 ;
   int res2 ;
-  int res3 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   std::vector< std::pair< double,double > >::iterator result;
   
   (void)self;
@@ -8097,24 +7764,19 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert__SWIG_0(PyObject *self, Py_ss
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "PairDoubleVector_insert" "', argument " "2"" of type '" "std::vector< std::pair< double,double > >::iterator""'");
     }
   }
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res3 = swig::asptr(swig_obj[2], &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg3 = ptr;
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "PairDoubleVector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp3);
   result = std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg__insert__SWIG_0(arg1,SWIG_STD_MOVE(arg2),(std::pair< double,double > const &)*arg3);
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::pair< double,double > >::iterator & >(result)),
     swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -8131,7 +7793,8 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert__SWIG_1(PyObject *self, Py_ss
   int res2 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int res4 = SWIG_OLDOBJ ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
   
   (void)self;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
@@ -8156,23 +7819,18 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert__SWIG_1(PyObject *self, Py_ss
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "PairDoubleVector_insert" "', argument " "3"" of type '" "std::vector< std::pair< double,double > >::size_type""'");
   } 
   arg3 = static_cast< std::vector< std::pair< double,double > >::size_type >(val3);
-  {
-    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
-    res4 = swig::asptr(swig_obj[3], &ptr);
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "PairDoubleVector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
-    }
-    arg4 = ptr;
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_std__pairT_double_double_t,  0  | 0);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "PairDoubleVector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
   }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PairDoubleVector_insert" "', argument " "4"" of type '" "std::vector< std::pair< double,double > >::value_type const &""'"); 
+  }
+  arg4 = reinterpret_cast< std::vector< std::pair< double,double > >::value_type * >(argp4);
   std_vector_Sl_std_pair_Sl_double_Sc_double_Sg__Sg__insert__SWIG_1(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3),(std::pair< double,double > const &)*arg4);
   resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res4)) delete arg4;
   return NULL;
 }
 
@@ -8194,7 +7852,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert(PyObject *self, PyObject *arg
       int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
       _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< std::pair< double,double > >::iterator > *>(iter) != 0));
       if (_v) {
-        int res = swig::asptr(argv[2], (std::pair< double,double >**)(0));
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
           return _wrap_PairDoubleVector_insert__SWIG_0(self, argc, argv);
@@ -8216,7 +7874,7 @@ SWIGINTERN PyObject *_wrap_PairDoubleVector_insert(PyObject *self, PyObject *arg
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          int res = swig::asptr(argv[3], (std::pair< double,double >**)(0));
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
             return _wrap_PairDoubleVector_insert__SWIG_1(self, argc, argv);
@@ -8320,6 +7978,267 @@ SWIGINTERN PyObject *PairDoubleVector_swigregister(PyObject *SWIGUNUSEDPARM(self
 }
 
 SWIGINTERN PyObject *PairDoubleVector_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_RunDecPair__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  result = (std::pair< double,double > *)new std::pair< double,double >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_RunDecPair__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  std::pair< double,double > *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_RunDecPair" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_RunDecPair" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  result = (std::pair< double,double > *)new std::pair< double,double >(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_RunDecPair__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  std::pair< double,double > *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  {
+    std::pair< double,double > *ptr = (std::pair< double,double > *)0;
+    res1 = swig::asptr(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_RunDecPair" "', argument " "1"" of type '" "std::pair< double,double > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_RunDecPair" "', argument " "1"" of type '" "std::pair< double,double > const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  result = (std::pair< double,double > *)new std::pair< double,double >((std::pair< double,double > const &)*arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_RunDecPair(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_RunDecPair", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_RunDecPair__SWIG_0(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v = 0;
+    int res = swig::asptr(argv[0], (std::pair< double,double >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_RunDecPair__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_RunDecPair__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_RunDecPair'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::pair< double,double >::pair()\n"
+    "    std::pair< double,double >::pair(double,double)\n"
+    "    std::pair< double,double >::pair(std::pair< double,double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunDecPair_first_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "RunDecPair_first_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_first_set" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunDecPair_first_set" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  if (arg1) (arg1)->first = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunDecPair_first_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_first_get" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
+  result = (double) ((arg1)->first);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunDecPair_second_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "RunDecPair_second_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_second_set" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunDecPair_second_set" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  if (arg1) (arg1)->second = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunDecPair_second_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_second_get" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
+  result = (double) ((arg1)->second);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_RunDecPair(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::pair< double,double > *arg1 = (std::pair< double,double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_RunDecPair" "', argument " "1"" of type '" "std::pair< double,double > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::pair< double,double > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *RunDecPair_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj = NULL;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_std__pairT_double_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *RunDecPair_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -8593,8 +8512,6 @@ SWIGINTERN PyObject *_wrap_RunDecPairArray___setitem__(PyObject *self, PyObject 
   int res1 = 0 ;
   size_t val2 ;
   int ecode2 = 0 ;
-  void *argp3 ;
-  int res3 = 0 ;
   PyObject *swig_obj[3] ;
   
   (void)self;
@@ -8610,17 +8527,15 @@ SWIGINTERN PyObject *_wrap_RunDecPairArray___setitem__(PyObject *self, PyObject 
   } 
   arg2 = static_cast< size_t >(val2);
   {
-    res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_RunDecPair,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RunDecPairArray___setitem__" "', argument " "3"" of type '" "RunDecPair""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RunDecPairArray___setitem__" "', argument " "3"" of type '" "RunDecPair""'");
-    } else {
-      RunDecPair * temp = reinterpret_cast< RunDecPair * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "RunDecPairArray___setitem__" "', argument " "3"" of type '" "RunDecPair""'");
     }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RunDecPairArray___setitem__" "', argument " "3"" of type '" "RunDecPair""'");
+    }
+    arg3 = *reinterpret_cast<std::pair<double,double> *>(argp);
   }
   RunDecPairArray___setitem__(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3));
   resultobj = SWIG_Py_Void();
@@ -9571,162 +9486,6 @@ SWIGINTERN PyObject *TriplenfMmu_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObje
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_RunDecPair_first_set(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *arg1 = (RunDecPair *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "RunDecPair_first_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_first_set" "', argument " "1"" of type '" "RunDecPair *""'"); 
-  }
-  arg1 = reinterpret_cast< RunDecPair * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunDecPair_first_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->first = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RunDecPair_first_get(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *arg1 = (RunDecPair *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_first_get" "', argument " "1"" of type '" "RunDecPair *""'"); 
-  }
-  arg1 = reinterpret_cast< RunDecPair * >(argp1);
-  result = (double) ((arg1)->first);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RunDecPair_second_set(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *arg1 = (RunDecPair *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "RunDecPair_second_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_second_set" "', argument " "1"" of type '" "RunDecPair *""'"); 
-  }
-  arg1 = reinterpret_cast< RunDecPair * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunDecPair_second_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->second = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RunDecPair_second_get(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *arg1 = (RunDecPair *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunDecPair_second_get" "', argument " "1"" of type '" "RunDecPair *""'"); 
-  }
-  arg1 = reinterpret_cast< RunDecPair * >(argp1);
-  result = (double) ((arg1)->second);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_RunDecPair(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *result = 0 ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "new_RunDecPair", 0, 0, 0)) SWIG_fail;
-  result = (RunDecPair *)new RunDecPair();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_RunDecPair, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_RunDecPair(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  RunDecPair *arg1 = (RunDecPair *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_RunDecPair, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_RunDecPair" "', argument " "1"" of type '" "RunDecPair *""'"); 
-  }
-  arg1 = reinterpret_cast< RunDecPair * >(argp1);
-  delete arg1;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *RunDecPair_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj = NULL;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_RunDecPair, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *RunDecPair_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
 SWIGINTERN PyObject *_wrap_AsmMS_Asexact_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   AsmMS *arg1 = (AsmMS *) 0 ;
@@ -9885,7 +9644,7 @@ SWIGINTERN PyObject *AsmMS_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
 
 SWIGINTERN PyObject *_wrap_fSetdydx(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   int arg3 ;
   void *argp1 ;
@@ -9932,7 +9691,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxa1(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -9979,7 +9738,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxM1(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10026,7 +9785,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxa2(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10073,7 +9832,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxM2(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10120,7 +9879,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxa3(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10167,7 +9926,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxM3(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10214,7 +9973,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxa4(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10261,7 +10020,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxM4(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10308,7 +10067,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxa5(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10355,7 +10114,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_fSetdydxM5(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  CRunDec arg1 ;
+  SwigValueWrapper< CRunDec > arg1 ;
   double arg2 ;
   double arg3 ;
   void *argp1 ;
@@ -10470,7 +10229,7 @@ fail:
 SWIGINTERN PyObject *_wrap_CRunDec_mq_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
-  RunDecPair *arg2 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg2 = (std::pair< double,double > *) (std::pair< double,double > *)0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -10484,17 +10243,17 @@ SWIGINTERN PyObject *_wrap_CRunDec_mq_set(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CRunDec_mq_set" "', argument " "1"" of type '" "CRunDec *""'"); 
   }
   arg1 = reinterpret_cast< CRunDec * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_RunDecPair, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CRunDec_mq_set" "', argument " "2"" of type '" "RunDecPair [4]""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CRunDec_mq_set" "', argument " "2"" of type '" "std::pair< double,double > [4]""'"); 
   } 
-  arg2 = reinterpret_cast< RunDecPair * >(argp2);
+  arg2 = reinterpret_cast< std::pair< double,double > * >(argp2);
   {
     if (arg2) {
       size_t ii = 0;
-      for (; ii < (size_t)4; ++ii) *(RunDecPair *)&arg1->mq[ii] = *((RunDecPair *)arg2 + ii);
+      for (; ii < (size_t)4; ++ii) *(std::pair< double,double > *)&arg1->mq[ii] = *((std::pair< double,double > *)arg2 + ii);
     } else {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in variable '""mq""' of type '""RunDecPair [4]""'");
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in variable '""mq""' of type '""std::pair< double,double > [4]""'");
     }
   }
   resultobj = SWIG_Py_Void();
@@ -10510,7 +10269,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mq_get(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  RunDecPair *result = 0 ;
+  std::pair< double,double > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -10520,8 +10279,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mq_get(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CRunDec_mq_get" "', argument " "1"" of type '" "CRunDec *""'"); 
   }
   arg1 = reinterpret_cast< CRunDec * >(argp1);
-  result = (RunDecPair *)(RunDecPair *) ((arg1)->mq);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_RunDecPair, 0 |  0 );
+  result = (std::pair< double,double > *)(std::pair< double,double > *) ((arg1)->mq);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__pairT_double_double_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -11960,7 +11719,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_AlL2AlH(PyObject *self, PyObject *args) {
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
   double arg3 ;
-  TriplenfMmu *arg4 = (TriplenfMmu *) 0 ;
+  TriplenfMmu *arg4 = (TriplenfMmu *) (TriplenfMmu *)0 ;
   double arg5 ;
   int arg6 ;
   void *argp1 = 0 ;
@@ -11997,8 +11756,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_AlL2AlH(PyObject *self, PyObject *args) {
   arg3 = static_cast< double >(val3);
   res4 = SWIG_ConvertPtr(swig_obj[3], &argp4,SWIGTYPE_p_TriplenfMmu, 0 |  0 );
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CRunDec_AlL2AlH" "', argument " "4"" of type '" "TriplenfMmu *""'"); 
-  }
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CRunDec_AlL2AlH" "', argument " "4"" of type '" "TriplenfMmu []""'"); 
+  } 
   arg4 = reinterpret_cast< TriplenfMmu * >(argp4);
   ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
   if (!SWIG_IsOK(ecode5)) {
@@ -12227,7 +11986,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12237,8 +11996,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12263,11 +12021,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOS" "', argument " "4"" of type '" "double""'");
@@ -12305,7 +12077,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12314,8 +12086,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12338,11 +12109,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOS" "', argument " "4"" of type '" "double""'");
@@ -12375,7 +12160,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12385,8 +12170,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12411,11 +12195,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMS" "', argument " "4"" of type '" "double""'");
@@ -12453,7 +12251,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12462,8 +12260,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12486,11 +12283,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMS" "', argument " "4"" of type '" "double""'");
@@ -12747,7 +12558,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   int arg5 ;
   int arg6 ;
@@ -12756,8 +12567,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   int val5 ;
@@ -12780,11 +12590,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mSI" "', argument " "4"" of type '" "double""'");
@@ -12817,7 +12641,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   int arg5 ;
   int arg6 ;
@@ -12825,8 +12649,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   int val5 ;
@@ -12847,11 +12670,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mSI" "', argument " "4"" of type '" "double""'");
@@ -12879,7 +12716,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_0(PyObject *self, Py_ssize_t
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12888,8 +12725,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_0(PyObject *self, Py_ssize_t
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12912,11 +12748,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_0(PyObject *self, Py_ssize_t
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMSrun" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMSrun" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMSrun" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMSrun" "', argument " "4"" of type '" "double""'");
@@ -12949,7 +12799,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_0(PyObject *self, Py_ssize_t
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -12958,8 +12808,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_0(PyObject *self, Py_ssize_t
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -12982,11 +12831,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_0(PyObject *self, Py_ssize_t
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOSrun" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOSrun" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOSrun" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOSrun" "', argument " "4"" of type '" "double""'");
@@ -13073,7 +12936,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_0(PyObject *self, Py_ssize_t 
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -13082,8 +12945,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_0(PyObject *self, Py_ssize_t 
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13106,11 +12968,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_0(PyObject *self, Py_ssize_t 
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMSit" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMSit" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMSit" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMSit" "', argument " "4"" of type '" "double""'");
@@ -13197,7 +13073,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mPS(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -13207,8 +13083,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mPS(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13234,11 +13109,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mPS(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mPS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mPS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mPS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mPS" "', argument " "4"" of type '" "double""'");
@@ -13276,7 +13165,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -13287,8 +13176,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13315,11 +13203,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mPS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mPS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mPS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mPS" "', argument " "4"" of type '" "double""'");
@@ -13362,7 +13264,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -13372,8 +13274,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13398,11 +13299,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mPS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mPS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mPS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mPS" "', argument " "4"" of type '" "double""'");
@@ -13455,9 +13370,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -13505,9 +13429,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -13554,8 +13487,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mPS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mPS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mPS(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mMS2mPS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mMS2mPS(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mMS2mPS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -13564,7 +13497,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -13575,8 +13508,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13603,11 +13535,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mPS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mPS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mPS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mPS2mMS" "', argument " "4"" of type '" "double""'");
@@ -13650,7 +13596,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -13660,8 +13606,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -13686,11 +13631,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mPS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mPS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mPS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mPS2mMS" "', argument " "4"" of type '" "double""'");
@@ -13743,9 +13702,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -13793,9 +13761,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -13842,8 +13819,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mPS2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mPS2mMS(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mPS2mMS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mPS2mMS(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mPS2mMS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -13852,7 +13829,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -13862,8 +13839,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -13886,11 +13862,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mPS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mPS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mPS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -13929,7 +13919,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -13938,8 +13928,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -13960,11 +13949,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mPS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mPS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mPS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -14013,9 +14016,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -14056,9 +14068,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -14098,8 +14119,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mPS2mSI(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mPS2mSI'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mPS2mSI(double,RunDecPair [],double (*)(double),double,int,int,double)\n"
-    "    CRunDec::mPS2mSI(double,RunDecPair [],double (*)(double),double,int,int)\n");
+    "    CRunDec::mPS2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int,double)\n"
+    "    CRunDec::mPS2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int)\n");
   return 0;
 }
 
@@ -14108,7 +14129,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2m1S(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -14117,8 +14138,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2m1S(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14142,11 +14162,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2m1S(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2m1S" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2m1S" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2m1S" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2m1S" "', argument " "4"" of type '" "double""'");
@@ -14179,7 +14213,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -14189,8 +14223,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14215,11 +14248,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2m1S" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2m1S" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2m1S" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2m1S" "', argument " "4"" of type '" "double""'");
@@ -14257,7 +14304,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -14266,8 +14313,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14290,11 +14336,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2m1S" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2m1S" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2m1S" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2m1S" "', argument " "4"" of type '" "double""'");
@@ -14342,9 +14402,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -14386,9 +14455,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -14429,8 +14507,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2m1S(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2m1S'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2m1S(double,RunDecPair [],double,double,int,int,double)\n"
-    "    CRunDec::mMS2m1S(double,RunDecPair [],double,double,int,int)\n");
+    "    CRunDec::mMS2m1S(double,std::pair< double,double > *,double,double,int,int,double)\n"
+    "    CRunDec::mMS2m1S(double,std::pair< double,double > *,double,double,int,int)\n");
   return 0;
 }
 
@@ -14439,7 +14517,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -14449,8 +14527,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14475,11 +14552,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_m1S2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_m1S2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_m1S2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_m1S2mMS" "', argument " "4"" of type '" "double""'");
@@ -14517,7 +14608,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -14526,8 +14617,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14550,11 +14640,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_m1S2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_m1S2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_m1S2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_m1S2mMS" "', argument " "4"" of type '" "double""'");
@@ -14602,9 +14706,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -14646,9 +14759,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -14689,8 +14811,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_m1S2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::m1S2mMS(double,RunDecPair [],double,double,int,int,double)\n"
-    "    CRunDec::m1S2mMS(double,RunDecPair [],double,double,int,int)\n");
+    "    CRunDec::m1S2mMS(double,std::pair< double,double > *,double,double,int,int,double)\n"
+    "    CRunDec::m1S2mMS(double,std::pair< double,double > *,double,double,int,int)\n");
   return 0;
 }
 
@@ -14699,7 +14821,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   int arg5 ;
   int arg6 ;
@@ -14708,8 +14830,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   int val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -14730,11 +14851,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_m1S2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_m1S2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_m1S2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -14768,7 +14903,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   int arg5 ;
   int arg6 ;
@@ -14776,8 +14911,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   int val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -14796,11 +14930,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_m1S2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_m1S2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_m1S2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -14844,9 +14992,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -14881,9 +15038,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -14917,8 +15083,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_m1S2mSI(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_m1S2mSI'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::m1S2mSI(double,RunDecPair [],double (*)(double),int,int,double)\n"
-    "    CRunDec::m1S2mSI(double,RunDecPair [],double (*)(double),int,int)\n");
+    "    CRunDec::m1S2mSI(double,std::pair< double,double > *,double (*)(double),int,int,double)\n"
+    "    CRunDec::m1S2mSI(double,std::pair< double,double > *,double (*)(double),int,int)\n");
   return 0;
 }
 
@@ -14927,7 +15093,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -14938,8 +15104,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -14966,11 +15131,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mRS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mRS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mRS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mRS" "', argument " "4"" of type '" "double""'");
@@ -15013,7 +15192,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15025,8 +15204,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15055,11 +15233,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mRS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mRS" "', argument " "4"" of type '" "double""'");
@@ -15107,7 +15299,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15119,8 +15311,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15149,11 +15340,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mRS2mMS" "', argument " "4"" of type '" "double""'");
@@ -15201,7 +15406,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -15212,8 +15417,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -15238,11 +15442,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_0(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -15286,7 +15504,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15296,8 +15514,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15322,11 +15539,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mRS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mRS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mRS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mRS" "', argument " "4"" of type '" "double""'");
@@ -15379,9 +15610,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -15429,9 +15669,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -15478,8 +15727,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mOS2mRS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mOS2mRS(double,RunDecPair [],double,double,double,int,int,bool)\n"
-    "    CRunDec::mOS2mRS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mOS2mRS(double,std::pair< double,double > *,double,double,double,int,int,bool)\n"
+    "    CRunDec::mOS2mRS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -15488,7 +15737,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15499,8 +15748,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15527,11 +15775,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mRS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mRS" "', argument " "4"" of type '" "double""'");
@@ -15574,7 +15836,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15584,8 +15846,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15610,11 +15871,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mRS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mRS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mRS" "', argument " "4"" of type '" "double""'");
@@ -15667,9 +15942,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -15717,9 +16001,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -15773,9 +16066,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -15828,9 +16130,9 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mRS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mRS(double,RunDecPair [],double,double,double,int,int,double,bool)\n"
-    "    CRunDec::mMS2mRS(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mMS2mRS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mMS2mRS(double,std::pair< double,double > *,double,double,double,int,int,double,bool)\n"
+    "    CRunDec::mMS2mRS(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mMS2mRS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -15839,7 +16141,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15850,8 +16152,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15878,11 +16179,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mRS2mMS" "', argument " "4"" of type '" "double""'");
@@ -15925,7 +16240,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -15935,8 +16250,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -15961,11 +16275,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mRS2mMS" "', argument " "4"" of type '" "double""'");
@@ -16018,9 +16346,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -16068,9 +16405,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -16124,9 +16470,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -16179,9 +16534,9 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mRS2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mRS2mMS(double,RunDecPair [],double,double,double,int,int,double,bool)\n"
-    "    CRunDec::mRS2mMS(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mRS2mMS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mRS2mMS(double,std::pair< double,double > *,double,double,double,int,int,double,bool)\n"
+    "    CRunDec::mRS2mMS(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mRS2mMS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -16190,7 +16545,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -16200,8 +16555,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -16224,11 +16578,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_1(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -16267,7 +16635,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -16276,8 +16644,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -16298,11 +16665,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -16351,9 +16732,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -16394,9 +16784,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -16443,9 +16842,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -16491,9 +16899,9 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRS2mSI(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mRS2mSI'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mRS2mSI(double,RunDecPair [],double (*)(double),double,int,int,double,bool)\n"
-    "    CRunDec::mRS2mSI(double,RunDecPair [],double (*)(double),double,int,int,double)\n"
-    "    CRunDec::mRS2mSI(double,RunDecPair [],double (*)(double),double,int,int)\n");
+    "    CRunDec::mRS2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int,double,bool)\n"
+    "    CRunDec::mRS2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int,double)\n"
+    "    CRunDec::mRS2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int)\n");
   return 0;
 }
 
@@ -16502,7 +16910,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRSp(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -16512,8 +16920,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRSp(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -16539,11 +16946,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mRSp(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mRSp" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mRSp" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mRSp" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mRSp" "', argument " "4"" of type '" "double""'");
@@ -16581,7 +17002,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_0(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -16592,8 +17013,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_0(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -16620,11 +17040,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mRSp" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mRSp" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mRSp" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mRSp" "', argument " "4"" of type '" "double""'");
@@ -16667,7 +17101,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_1(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -16677,8 +17111,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_1(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -16703,11 +17136,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mRSp" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mRSp" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mRSp" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mRSp" "', argument " "4"" of type '" "double""'");
@@ -16760,9 +17207,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -16810,9 +17266,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -16859,8 +17324,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mRSp(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mRSp'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mRSp(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mMS2mRSp(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mMS2mRSp(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mMS2mRSp(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -16869,7 +17334,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_0(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -16880,8 +17345,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_0(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -16908,11 +17372,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRSp2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRSp2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRSp2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mRSp2mMS" "', argument " "4"" of type '" "double""'");
@@ -16955,7 +17433,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_1(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
@@ -16965,8 +17443,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_1(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -16991,11 +17468,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRSp2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRSp2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRSp2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mRSp2mMS" "', argument " "4"" of type '" "double""'");
@@ -17048,9 +17539,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -17098,9 +17598,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -17147,8 +17656,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mRSp2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mRSp2mMS(double,RunDecPair [],double,double,double,int,int,double)\n"
-    "    CRunDec::mRSp2mMS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mRSp2mMS(double,std::pair< double,double > *,double,double,double,int,int,double)\n"
+    "    CRunDec::mRSp2mMS(double,std::pair< double,double > *,double,double,double,int,int)\n");
   return 0;
 }
 
@@ -17157,7 +17666,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_0(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -17167,8 +17676,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_0(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -17191,11 +17699,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRSp2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRSp2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRSp2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -17234,7 +17756,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_1(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double (*arg4)(double) = (double (*)(double)) 0 ;
   double arg5 ;
   int arg6 ;
@@ -17243,8 +17765,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_1(PyObject *self, Py_ssize_t n
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val5 ;
   int ecode5 = 0 ;
   int val6 ;
@@ -17265,11 +17786,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mRSp2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mRSp2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mRSp2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   {
     int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_double__double);
     if (!SWIG_IsOK(res)) {
@@ -17318,9 +17853,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -17361,9 +17905,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           void *ptr = 0;
           int res = SWIG_ConvertFunctionPtr(argv[3], &ptr, SWIGTYPE_p_f_double__double);
@@ -17403,8 +17956,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mRSp2mSI(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mRSp2mSI'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mRSp2mSI(double,RunDecPair [],double (*)(double),double,int,int,double)\n"
-    "    CRunDec::mRSp2mSI(double,RunDecPair [],double (*)(double),double,int,int)\n");
+    "    CRunDec::mRSp2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int,double)\n"
+    "    CRunDec::mRSp2mSI(double,std::pair< double,double > *,double (*)(double),double,int,int)\n");
   return 0;
 }
 
@@ -17413,20 +17966,19 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_0(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
   int arg7 ;
   int arg8 ;
   int arg9 ;
-  int arg10 ;
+  std::string arg10 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -17439,8 +17991,6 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_0(PyObject *self, Py_ssize_t n
   int ecode8 = 0 ;
   int val9 ;
   int ecode9 = 0 ;
-  int val10 ;
-  int ecode10 = 0 ;
   double result;
   
   (void)self;
@@ -17455,11 +18005,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mKIN" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mKIN" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mKIN" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mKIN" "', argument " "4"" of type '" "double""'");
@@ -17490,12 +18054,16 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "CRunDec_mMS2mKIN" "', argument " "9"" of type '" "int""'");
   } 
   arg9 = static_cast< int >(val9);
-  ecode10 = SWIG_AsVal_int(swig_obj[9], &val10);
-  if (!SWIG_IsOK(ecode10)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "CRunDec_mMS2mKIN" "', argument " "10"" of type '" "int""'");
-  } 
-  arg10 = static_cast< int >(val10);
-  result = (double)(arg1)->mMS2mKIN(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[9], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "CRunDec_mMS2mKIN" "', argument " "10"" of type '" "std::string""'"); 
+    }
+    arg10 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (double)(arg1)->mMS2mKIN(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,SWIG_STD_MOVE(arg10));
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -17507,20 +18075,19 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_0(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
   int arg7 ;
   int arg8 ;
   int arg9 ;
-  int arg10 ;
+  std::string arg10 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -17533,8 +18100,6 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_0(PyObject *self, Py_ssize_t n
   int ecode8 = 0 ;
   int val9 ;
   int ecode9 = 0 ;
-  int val10 ;
-  int ecode10 = 0 ;
   double result;
   
   (void)self;
@@ -17549,11 +18114,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mKIN2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mKIN2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mKIN2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mKIN2mMS" "', argument " "4"" of type '" "double""'");
@@ -17584,12 +18163,16 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_0(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "CRunDec_mKIN2mMS" "', argument " "9"" of type '" "int""'");
   } 
   arg9 = static_cast< int >(val9);
-  ecode10 = SWIG_AsVal_int(swig_obj[9], &val10);
-  if (!SWIG_IsOK(ecode10)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "CRunDec_mKIN2mMS" "', argument " "10"" of type '" "int""'");
-  } 
-  arg10 = static_cast< int >(val10);
-  result = (double)(arg1)->mKIN2mMS(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[9], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "CRunDec_mKIN2mMS" "', argument " "10"" of type '" "std::string""'"); 
+    }
+    arg10 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (double)(arg1)->mKIN2mMS(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,SWIG_STD_MOVE(arg10));
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -20273,7 +20856,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -20282,8 +20865,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -20306,11 +20888,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOS" "', argument " "4"" of type '" "double""'");
@@ -20343,7 +20939,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_3(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -20351,8 +20947,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_3(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -20373,11 +20968,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS__SWIG_3(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOS" "', argument " "4"" of type '" "double""'");
@@ -20420,9 +21029,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20458,9 +21076,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20502,9 +21129,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20546,9 +21182,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20589,10 +21234,10 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mOS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mOS(double,RunDecPair [],double,double,int,int,double)\n"
-    "    CRunDec::mMS2mOS(double,RunDecPair [],double,double,int,int)\n"
-    "    CRunDec::mMS2mOS(double,RunDecPair [],double,double,int,double)\n"
-    "    CRunDec::mMS2mOS(double,RunDecPair [],double,double,int)\n");
+    "    CRunDec::mMS2mOS(double,std::pair< double,double > *,double,double,int,int,double)\n"
+    "    CRunDec::mMS2mOS(double,std::pair< double,double > *,double,double,int,int)\n"
+    "    CRunDec::mMS2mOS(double,std::pair< double,double > *,double,double,int,double)\n"
+    "    CRunDec::mMS2mOS(double,std::pair< double,double > *,double,double,int)\n");
   return 0;
 }
 
@@ -20601,7 +21246,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -20610,8 +21255,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -20634,11 +21278,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMS" "', argument " "4"" of type '" "double""'");
@@ -20671,7 +21329,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_3(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -20679,8 +21337,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_3(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -20701,11 +21358,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS__SWIG_3(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMS" "', argument " "4"" of type '" "double""'");
@@ -20748,9 +21419,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20786,9 +21466,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20830,9 +21519,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20874,9 +21572,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -20917,10 +21624,10 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mOS2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mOS2mMS(double,RunDecPair [],double,double,int,int,double)\n"
-    "    CRunDec::mOS2mMS(double,RunDecPair [],double,double,int,int)\n"
-    "    CRunDec::mOS2mMS(double,RunDecPair [],double,double,int,double)\n"
-    "    CRunDec::mOS2mMS(double,RunDecPair [],double,double,int)\n");
+    "    CRunDec::mOS2mMS(double,std::pair< double,double > *,double,double,int,int,double)\n"
+    "    CRunDec::mOS2mMS(double,std::pair< double,double > *,double,double,int,int)\n"
+    "    CRunDec::mOS2mMS(double,std::pair< double,double > *,double,double,int,double)\n"
+    "    CRunDec::mOS2mMS(double,std::pair< double,double > *,double,double,int)\n");
   return 0;
 }
 
@@ -21445,7 +22152,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   int arg5 ;
   double arg6 ;
@@ -21453,8 +22160,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   int val5 ;
@@ -21475,11 +22181,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_2(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mSI" "', argument " "4"" of type '" "double""'");
@@ -21507,15 +22227,14 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_3(PyObject *self, Py_ssize_t no
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   int arg5 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   int val5 ;
@@ -21534,11 +22253,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI__SWIG_3(PyObject *self, Py_ssize_t no
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mSI" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mSI" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mSI" "', argument " "4"" of type '" "double""'");
@@ -21576,9 +22309,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21608,9 +22350,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21646,9 +22397,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21684,9 +22444,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21721,10 +22490,10 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mSI(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mOS2mSI'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mOS2mSI(double,RunDecPair [],double,int,int,double)\n"
-    "    CRunDec::mOS2mSI(double,RunDecPair [],double,int,int)\n"
-    "    CRunDec::mOS2mSI(double,RunDecPair [],double,int,double)\n"
-    "    CRunDec::mOS2mSI(double,RunDecPair [],double,int)\n");
+    "    CRunDec::mOS2mSI(double,std::pair< double,double > *,double,int,int,double)\n"
+    "    CRunDec::mOS2mSI(double,std::pair< double,double > *,double,int,int)\n"
+    "    CRunDec::mOS2mSI(double,std::pair< double,double > *,double,int,double)\n"
+    "    CRunDec::mOS2mSI(double,std::pair< double,double > *,double,int)\n");
   return 0;
 }
 
@@ -21733,7 +22502,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_1(PyObject *self, Py_ssize_t
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -21741,8 +22510,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_1(PyObject *self, Py_ssize_t
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -21763,11 +22531,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun__SWIG_1(PyObject *self, Py_ssize_t
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMSrun" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMSrun" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMSrun" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMSrun" "', argument " "4"" of type '" "double""'");
@@ -21810,9 +22592,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21848,9 +22639,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -21885,8 +22685,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSrun(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mOS2mMSrun'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mOS2mMSrun(double,RunDecPair [],double,double,int,int)\n"
-    "    CRunDec::mOS2mMSrun(double,RunDecPair [],double,double,int)\n");
+    "    CRunDec::mOS2mMSrun(double,std::pair< double,double > *,double,double,int,int)\n"
+    "    CRunDec::mOS2mMSrun(double,std::pair< double,double > *,double,double,int)\n");
   return 0;
 }
 
@@ -21895,7 +22695,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_1(PyObject *self, Py_ssize_t
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -21903,8 +22703,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_1(PyObject *self, Py_ssize_t
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -21925,11 +22724,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun__SWIG_1(PyObject *self, Py_ssize_t
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mOSrun" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mOSrun" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mOSrun" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mOSrun" "', argument " "4"" of type '" "double""'");
@@ -21972,9 +22785,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22010,9 +22832,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22047,8 +22878,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mOSrun(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mOSrun'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mOSrun(double,RunDecPair [],double,double,int,int)\n"
-    "    CRunDec::mMS2mOSrun(double,RunDecPair [],double,double,int)\n");
+    "    CRunDec::mMS2mOSrun(double,std::pair< double,double > *,double,double,int,int)\n"
+    "    CRunDec::mMS2mOSrun(double,std::pair< double,double > *,double,double,int)\n");
   return 0;
 }
 
@@ -22181,7 +23012,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_1(PyObject *self, Py_ssize_t 
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   int arg6 ;
@@ -22189,8 +23020,7 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_1(PyObject *self, Py_ssize_t 
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -22211,11 +23041,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit__SWIG_1(PyObject *self, Py_ssize_t 
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mOS2mMSit" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mOS2mMSit" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mOS2mMSit" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mOS2mMSit" "', argument " "4"" of type '" "double""'");
@@ -22258,9 +23102,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22296,9 +23149,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22333,8 +23195,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mOS2mMSit(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mOS2mMSit'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mOS2mMSit(double,RunDecPair [],double,double,int,int)\n"
-    "    CRunDec::mOS2mMSit(double,RunDecPair [],double,double,int)\n");
+    "    CRunDec::mOS2mMSit(double,std::pair< double,double > *,double,double,int,int)\n"
+    "    CRunDec::mOS2mMSit(double,std::pair< double,double > *,double,double,int)\n");
   return 0;
 }
 
@@ -22467,18 +23329,17 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_1(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
   int arg7 ;
-  int arg8 ;
+  std::string arg8 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -22487,8 +23348,6 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_1(PyObject *self, Py_ssize_t n
   int ecode6 = 0 ;
   int val7 ;
   int ecode7 = 0 ;
-  int val8 ;
-  int ecode8 = 0 ;
   double result;
   
   (void)self;
@@ -22503,11 +23362,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mMS2mKIN" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mMS2mKIN" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mMS2mKIN" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mMS2mKIN" "', argument " "4"" of type '" "double""'");
@@ -22528,12 +23401,16 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "CRunDec_mMS2mKIN" "', argument " "7"" of type '" "int""'");
   } 
   arg7 = static_cast< int >(val7);
-  ecode8 = SWIG_AsVal_int(swig_obj[7], &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "CRunDec_mMS2mKIN" "', argument " "8"" of type '" "int""'");
-  } 
-  arg8 = static_cast< int >(val8);
-  result = (double)(arg1)->mMS2mKIN(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[7], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "CRunDec_mMS2mKIN" "', argument " "8"" of type '" "std::string""'"); 
+    }
+    arg8 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (double)(arg1)->mMS2mKIN(arg2,arg3,arg4,arg5,arg6,arg7,SWIG_STD_MOVE(arg8));
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -22560,9 +23437,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22584,10 +23470,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN(PyObject *self, PyObject *args) {
                   _v = SWIG_CheckState(res);
                 }
                 if (_v) {
-                  {
-                    int res = SWIG_AsVal_int(argv[7], NULL);
-                    _v = SWIG_CheckState(res);
-                  }
+                  int res = SWIG_AsPtr_std_string(argv[7], (std::string**)(0));
+                  _v = SWIG_CheckState(res);
                   if (_v) {
                     return _wrap_CRunDec_mMS2mKIN__SWIG_1(self, argc, argv);
                   }
@@ -22610,9 +23494,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22644,10 +23537,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN(PyObject *self, PyObject *args) {
                       _v = SWIG_CheckState(res);
                     }
                     if (_v) {
-                      {
-                        int res = SWIG_AsVal_int(argv[9], NULL);
-                        _v = SWIG_CheckState(res);
-                      }
+                      int res = SWIG_AsPtr_std_string(argv[9], (std::string**)(0));
+                      _v = SWIG_CheckState(res);
                       if (_v) {
                         return _wrap_CRunDec_mMS2mKIN__SWIG_0(self, argc, argv);
                       }
@@ -22665,8 +23556,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mMS2mKIN(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mMS2mKIN'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mMS2mKIN(double,RunDecPair [],double,double,double,int,int,int,int)\n"
-    "    CRunDec::mMS2mKIN(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mMS2mKIN(double,std::pair< double,double > *,double,double,double,int,int,int,std::string)\n"
+    "    CRunDec::mMS2mKIN(double,std::pair< double,double > *,double,double,double,int,std::string)\n");
   return 0;
 }
 
@@ -22675,18 +23566,17 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_1(PyObject *self, Py_ssize_t n
   PyObject *resultobj = 0;
   CRunDec *arg1 = (CRunDec *) 0 ;
   double arg2 ;
-  RunDecPair *arg3 = (RunDecPair *) (RunDecPair *)0 ;
+  std::pair< double,double > *arg3 = (std::pair< double,double > *) 0 ;
   double arg4 ;
   double arg5 ;
   double arg6 ;
   int arg7 ;
-  int arg8 ;
+  std::string arg8 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
+  std::pair< double,double > temp3 ;
   double val4 ;
   int ecode4 = 0 ;
   double val5 ;
@@ -22695,8 +23585,6 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_1(PyObject *self, Py_ssize_t n
   int ecode6 = 0 ;
   int val7 ;
   int ecode7 = 0 ;
-  int val8 ;
-  int ecode8 = 0 ;
   double result;
   
   (void)self;
@@ -22711,11 +23599,25 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CRunDec_mKIN2mMS" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_RunDecPair, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CRunDec_mKIN2mMS" "', argument " "3"" of type '" "RunDecPair []""'"); 
-  } 
-  arg3 = reinterpret_cast< RunDecPair * >(argp3);
+  {
+    void *argp = 0;
+    // Try RunDecPairArray first
+    int res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_RunDecPairArray, 0 | 0);
+    if (SWIG_IsOK(res)) {
+      // It's a RunDecPairArray, use it directly
+      arg3 = reinterpret_cast<std::pair<double,double> *>(argp);
+    } else {
+      // Try single std::pair<double,double> (RunDecPair)
+      res = SWIG_ConvertPtr(swig_obj[2], &argp, SWIGTYPE_p_std__pairT_double_double_t, 0 | 0);
+      if (SWIG_IsOK(res)) {
+        // It's a single RunDecPair, store in temp3 and pass its address
+        temp3 = *reinterpret_cast<std::pair<double,double> *>(argp);
+        arg3 = &temp3;
+      } else {
+        SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CRunDec_mKIN2mMS" "', argument " "3"" of type '" "std::pair< double,double > *""'");
+      }
+    }
+  }
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CRunDec_mKIN2mMS" "', argument " "4"" of type '" "double""'");
@@ -22736,12 +23638,16 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS__SWIG_1(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "CRunDec_mKIN2mMS" "', argument " "7"" of type '" "int""'");
   } 
   arg7 = static_cast< int >(val7);
-  ecode8 = SWIG_AsVal_int(swig_obj[7], &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "CRunDec_mKIN2mMS" "', argument " "8"" of type '" "int""'");
-  } 
-  arg8 = static_cast< int >(val8);
-  result = (double)(arg1)->mKIN2mMS(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[7], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "CRunDec_mKIN2mMS" "', argument " "8"" of type '" "std::string""'"); 
+    }
+    arg8 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (double)(arg1)->mKIN2mMS(arg2,arg3,arg4,arg5,arg6,arg7,SWIG_STD_MOVE(arg8));
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -22768,9 +23674,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22792,10 +23707,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS(PyObject *self, PyObject *args) {
                   _v = SWIG_CheckState(res);
                 }
                 if (_v) {
-                  {
-                    int res = SWIG_AsVal_int(argv[7], NULL);
-                    _v = SWIG_CheckState(res);
-                  }
+                  int res = SWIG_AsPtr_std_string(argv[7], (std::string**)(0));
+                  _v = SWIG_CheckState(res);
                   if (_v) {
                     return _wrap_CRunDec_mKIN2mMS__SWIG_1(self, argc, argv);
                   }
@@ -22818,9 +23731,18 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPair, 0);
-        _v = SWIG_CheckState(res);
+        {
+          void *vptr = 0;
+          // Check if it's a RunDecPairArray
+          int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_RunDecPairArray, 0);
+          if (SWIG_IsOK(res)) {
+            _v = 1;
+          } else {
+            // Check if it's a single RunDecPair (std::pair<double,double>)
+            res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__pairT_double_double_t, 0);
+            _v = SWIG_IsOK(res) ? 1 : 0;
+          }
+        }
         if (_v) {
           {
             int res = SWIG_AsVal_double(argv[3], NULL);
@@ -22852,10 +23774,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS(PyObject *self, PyObject *args) {
                       _v = SWIG_CheckState(res);
                     }
                     if (_v) {
-                      {
-                        int res = SWIG_AsVal_int(argv[9], NULL);
-                        _v = SWIG_CheckState(res);
-                      }
+                      int res = SWIG_AsPtr_std_string(argv[9], (std::string**)(0));
+                      _v = SWIG_CheckState(res);
                       if (_v) {
                         return _wrap_CRunDec_mKIN2mMS__SWIG_0(self, argc, argv);
                       }
@@ -22873,8 +23793,8 @@ SWIGINTERN PyObject *_wrap_CRunDec_mKIN2mMS(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CRunDec_mKIN2mMS'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    CRunDec::mKIN2mMS(double,RunDecPair [],double,double,double,int,int,int,int)\n"
-    "    CRunDec::mKIN2mMS(double,RunDecPair [],double,double,double,int,int)\n");
+    "    CRunDec::mKIN2mMS(double,std::pair< double,double > *,double,double,double,int,int,int,std::string)\n"
+    "    CRunDec::mKIN2mMS(double,std::pair< double,double > *,double,double,double,int,std::string)\n");
   return 0;
 }
 
@@ -22932,14 +23852,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "SwigPyIterator___add__", _wrap_SwigPyIterator___add__, METH_VARARGS, NULL},
 	 { "SwigPyIterator___sub__", _wrap_SwigPyIterator___sub__, METH_VARARGS, NULL},
 	 { "SwigPyIterator_swigregister", SwigPyIterator_swigregister, METH_O, NULL},
-	 { "new_PairDouble", _wrap_new_PairDouble, METH_VARARGS, NULL},
-	 { "PairDouble_first_set", _wrap_PairDouble_first_set, METH_VARARGS, NULL},
-	 { "PairDouble_first_get", _wrap_PairDouble_first_get, METH_O, NULL},
-	 { "PairDouble_second_set", _wrap_PairDouble_second_set, METH_VARARGS, NULL},
-	 { "PairDouble_second_get", _wrap_PairDouble_second_get, METH_O, NULL},
-	 { "delete_PairDouble", _wrap_delete_PairDouble, METH_O, NULL},
-	 { "PairDouble_swigregister", PairDouble_swigregister, METH_O, NULL},
-	 { "PairDouble_swiginit", PairDouble_swiginit, METH_VARARGS, NULL},
 	 { "PairDoubleVector_iterator", _wrap_PairDoubleVector_iterator, METH_O, NULL},
 	 { "PairDoubleVector___nonzero__", _wrap_PairDoubleVector___nonzero__, METH_O, NULL},
 	 { "PairDoubleVector___bool__", _wrap_PairDoubleVector___bool__, METH_O, NULL},
@@ -22975,6 +23887,14 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_PairDoubleVector", _wrap_delete_PairDoubleVector, METH_O, NULL},
 	 { "PairDoubleVector_swigregister", PairDoubleVector_swigregister, METH_O, NULL},
 	 { "PairDoubleVector_swiginit", PairDoubleVector_swiginit, METH_VARARGS, NULL},
+	 { "new_RunDecPair", _wrap_new_RunDecPair, METH_VARARGS, NULL},
+	 { "RunDecPair_first_set", _wrap_RunDecPair_first_set, METH_VARARGS, NULL},
+	 { "RunDecPair_first_get", _wrap_RunDecPair_first_get, METH_O, NULL},
+	 { "RunDecPair_second_set", _wrap_RunDecPair_second_set, METH_VARARGS, NULL},
+	 { "RunDecPair_second_get", _wrap_RunDecPair_second_get, METH_O, NULL},
+	 { "delete_RunDecPair", _wrap_delete_RunDecPair, METH_O, NULL},
+	 { "RunDecPair_swigregister", RunDecPair_swigregister, METH_O, NULL},
+	 { "RunDecPair_swiginit", RunDecPair_swiginit, METH_VARARGS, NULL},
 	 { "new_TriplenfMmuArray", _wrap_new_TriplenfMmuArray, METH_O, NULL},
 	 { "delete_TriplenfMmuArray", _wrap_delete_TriplenfMmuArray, METH_O, NULL},
 	 { "TriplenfMmuArray___getitem__", _wrap_TriplenfMmuArray___getitem__, METH_VARARGS, NULL},
@@ -23027,14 +23947,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_TriplenfMmu", _wrap_delete_TriplenfMmu, METH_O, NULL},
 	 { "TriplenfMmu_swigregister", TriplenfMmu_swigregister, METH_O, NULL},
 	 { "TriplenfMmu_swiginit", TriplenfMmu_swiginit, METH_VARARGS, NULL},
-	 { "RunDecPair_first_set", _wrap_RunDecPair_first_set, METH_VARARGS, NULL},
-	 { "RunDecPair_first_get", _wrap_RunDecPair_first_get, METH_O, NULL},
-	 { "RunDecPair_second_set", _wrap_RunDecPair_second_set, METH_VARARGS, NULL},
-	 { "RunDecPair_second_get", _wrap_RunDecPair_second_get, METH_O, NULL},
-	 { "new_RunDecPair", _wrap_new_RunDecPair, METH_NOARGS, NULL},
-	 { "delete_RunDecPair", _wrap_delete_RunDecPair, METH_O, NULL},
-	 { "RunDecPair_swigregister", RunDecPair_swigregister, METH_O, NULL},
-	 { "RunDecPair_swiginit", RunDecPair_swiginit, METH_VARARGS, NULL},
 	 { "AsmMS_Asexact_set", _wrap_AsmMS_Asexact_set, METH_VARARGS, NULL},
 	 { "AsmMS_Asexact_get", _wrap_AsmMS_Asexact_get, METH_O, NULL},
 	 { "AsmMS_mMSexact_set", _wrap_AsmMS_mMSexact_set, METH_VARARGS, NULL},
@@ -23126,11 +24038,11 @@ static PyMethodDef SwigMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_RunDecPairArrayTo_p_RunDecPair(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((RunDecPair *)  ((RunDecPairArray *) x));
-}
 static void *_p_TriplenfMmuArrayTo_p_TriplenfMmu(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((TriplenfMmu *)  ((TriplenfMmuArray *) x));
+}
+static void *_p_RunDecPairArrayTo_p_RunDecPair(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((RunDecPair *)  ((RunDecPairArray *) x));
 }
 static swig_type_info _swigt__p_AsmMS = {"_p_AsmMS", "AsmMS *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_CRunDec = {"_p_CRunDec", "CRunDec *", 0, 0, (void*)0, 0};
@@ -23149,7 +24061,7 @@ static swig_type_info _swigt__p_second_type = {"_p_second_type", "second_type *"
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__pairT_double_double_t_t = {"_p_std__allocatorT_std__pairT_double_double_t_t", "std::vector< std::pair< double,double > >::allocator_type *|std::allocator< std::pair< double,double > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__pairT_double_double_t = {"_p_std__pairT_double_double_t", "std::pair< double,double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__pairT_double_double_t = {"_p_std__pairT_double_double_t", "std::vector< std::pair< double,double > >::value_type *|std::pair< double,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__pairT_double_double_t_t = {"_p_std__vectorT_std__pairT_double_double_t_t", "std::vector< std::pair< double,double >,std::allocator< std::pair< double,double > > > *|std::vector< std::pair< double,double > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
