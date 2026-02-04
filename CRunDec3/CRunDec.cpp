@@ -1,10 +1,19 @@
 /*
+  CRunDec.cpp, v3.1.1
+
+  Authors: Florian Herren and Matthias Steinhauser (May 2021)
+
+  Changes since v3.1:
+  September 2025: Bug fix in mMS2mOS and mOS2mMS: Missing nl^3*(Log[mu^2/m^2])^4 terms restored.
+                  Thanks to Long Chen for pointing out that the terms are missing.
+*/
+
+/*
   CRunDec.cpp, v3.1
 
   Authors: Florian Herren and Matthias Steinhauser (May 2021)
 
   Changes since v3.0:
-  Jul 2023: Scheme for the kinetic mass cahnged to integers (A=0, B=1, C=3, D=3)
   May 2021: fix array lengths in AlphasLam and fSetAsL. Thanks to Florian Bernlochner for pointing out this bug.
   Jul 2020: implemented mMS2mKIN and mKIN2mMS (arXiv:2005:06478)
             Coefficients ctil[3][{3,4,5}] updated. Thanks to Christopher Lepenik for providing the new values.
@@ -123,7 +132,7 @@ SOFTWARE.
 #include <iomanip>
 #include <cmath>
 
-#include "CRunDec.3.1.h"
+#include "CRunDec.h"
 
 // Some constants:
 #define cf 4./3.
@@ -132,7 +141,7 @@ SOFTWARE.
 #define B4 -1.762800087073770864061897634679818807215137274389016762629478603776
 #define A4 0.5174790616738993863307581618988629456223774751413792582443193479770
 #define A5 0.5084005792422687074591088492585899413195411256648216487244977963526
-#define Pi 3.141592653589793238462643
+#define Pi M_PI
 #define Zeta2 (Pi*Pi)/6.
 #define Zeta3 1.20205690315959428539973816151144999076498629234049888179227155534
 #define Zeta4 (Pi*Pi*Pi*Pi)/90.
@@ -833,7 +842,7 @@ double CRunDec::fMsFromOs4(double mu, double M, double nl, double err){
      erg =  - 3654.15040757339*err - 1524.2292266911543*lmM - 288.778291935394*lmM*lmM - 32.54735725308642*lmM*lmM*lmM - 
             1.85546875*lmM*lmM*lmM*lmM +
             nl*nl*nl*(0. + 0.678141025604516*err + 0.3205521521864135*lmM + 0.0800290327210927*lmM*lmM +      
-            0.010030864197530864*lmM*lmM*lmM) + 
+            0.010030864197530864*lmM*lmM*lmM + 0.001157407407407407*lmM*lmM*lmM*lmM) + 
             nl*nl*(0. - 43.48241924867489*err - 19.82672048099557*lmM - 4.482957520194182*lmM*lmM - 
             0.5270061728395061*lmM*lmM*lmM - 0.04108796296296297*lmM*lmM*lmM*lmM) +
             nl*(0. + 756.9421565599532*err + 330.1770776731065*lmM + 67.99849534415492*lmM*lmM + 
@@ -841,9 +850,9 @@ double CRunDec::fMsFromOs4(double mu, double M, double nl, double err){
      return erg;
 }
 
-// Function: double CRunDec::mOS2mMS(double mOS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mOS2mMS(double mOS, std::pair<double,double>* mq, double asmu,
 //                           double Mu, int nl, double fdelm)
-double CRunDec::mOS2mMS(double mOS, RunDecPair mq[], double asmu, double Mu,int nl, double fdelm){
+double CRunDec::mOS2mMS(double mOS, std::pair<double,double>* mq, double asmu, double Mu,int nl, double fdelm){
      if(nl<0||nl>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nl<<" LOOPS"<<endl;
        RETURN 
@@ -1017,7 +1026,7 @@ double CRunDec::fOsFromMs4(double mu, double M, double nl, double err){
      erg = 3567.602784989066*err + 1727.2260148986106*lmM + 409.2429990574718*lmM*lmM + 66.93663194444443*lmM*lmM*lmM + 
            8.056278935185185*lmM*lmM*lmM*lmM + 
            nl*nl*nl*(-0.678141025604516*err - 0.3205521521864134*lmM - 0.0800290327210927*lmM*lmM - 
-           0.010030864197530864*lmM*lmM*lmM) + 
+           0.010030864197530864*lmM*lmM*lmM - 0.001157407407407407*lmM*lmM*lmM*lmM) + 
            nl*(-745.7207145811878*err - 358.29765085086774*lmM - 87.39262571554698*lmM*lmM - 
            11.883873456790122*lmM*lmM*lmM - 1.2705439814814814*lmM*lmM*lmM*lmM) + 
            nl*nl*(43.396250117985666*err + 20.528466368867228*lmM + 4.971905254812516*lmM*lmM + 
@@ -1026,7 +1035,7 @@ double CRunDec::fOsFromMs4(double mu, double M, double nl, double err){
 }
 
 // Compute 2 Loop contribution to mOS2mMS at 3 loops for MS light quarks
-double CRunDec::deltamOS2mMS(double mOS, RunDecPair mq[], double asmu, double mu, int nlq, int nloops){
+double CRunDec::deltamOS2mMS(double mOS, std::pair<double,double>* mq, double asmu, double mu, int nlq, int nloops){
      double erg=0.0;
      if(!mq)
        return 0.0;
@@ -1057,7 +1066,7 @@ double CRunDec::deltamOS2mMS(double mOS, RunDecPair mq[], double asmu, double mu
 }
 
 // Compute 2 Loop contribution to mMS2mOS at 3 loops for MS light quarks
-double CRunDec::deltamMS2mOS(double mMS, RunDecPair mq[], double asmu, double mu, int nlq, int nloops){
+double CRunDec::deltamMS2mOS(double mMS, std::pair<double,double>* mq, double asmu, double mu, int nlq, int nloops){
      double erg=0.0;
      double lmu = log(mu*mu/(mMS*mMS));
      if(!mq)
@@ -1112,9 +1121,9 @@ double CRunDec::fZmInvM(double nl){
      return erg;
 }
 
-// Function: double CRunDec::mMS2mOS(double mMS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mMS2mOS(double mMS, std::pair<double,double>* mq, double asmu,
 //                           double mu,int nl)
-double CRunDec::mMS2mOS(double mMS, RunDecPair mq[], double asmu, double mu, int nl, double fdelm){
+double CRunDec::mMS2mOS(double mMS, std::pair<double,double>* mq, double asmu, double mu, int nl, double fdelm){
      if(nl<0||nl>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nl<<" LOOPS"<<endl;
        RETURN  
@@ -1144,9 +1153,9 @@ double CRunDec::mMS2mOS(double mMS, RunDecPair mq[], double asmu, double mu, int
      return mMS*erg;
 }
 
-// Function: double CRunDec::mMS2mOSmod(double mMS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mMS2mOSmod(double mMS, std::pair<double,double>* mq, double asmu,
 //                           double mu, int nf, int nloop, double fdelm), needed for several other mass relations
-double CRunDec::mMS2mOSmod(double mMS, RunDecPair mq[], double asmu, double mu,int nf, int nloop, double fdelm){
+double CRunDec::mMS2mOSmod(double mMS, std::pair<double,double>* mq, double asmu, double mu,int nf, int nloop, double fdelm){
      if(nloop<0||nloop>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloop <<" LOOPS"<<endl;
        RETURN  
@@ -1229,9 +1238,9 @@ double CRunDec::fMumFromOs4(double err){
      return erg;
 }
 
-// Function: double CRunDec::mOS2mSI(double mOS, RunDecPair mq[], double asM, 
+// Function: double CRunDec::mOS2mSI(double mOS, std::pair<double,double>* mq, double asM, 
 //                           int nl)
-double CRunDec::mOS2mSI(double mOS, RunDecPair mq[], double asM, int nl, double fdelm){
+double CRunDec::mOS2mSI(double mOS, std::pair<double,double>* mq, double asM, int nl, double fdelm){
      if(nl<0||nl>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nl<<" LOOPS"<<endl;
        RETURN  
@@ -1264,9 +1273,9 @@ double CRunDec::mOS2mSI(double mOS, RunDecPair mq[], double asM, int nl, double 
        
 }
 
-// Function: double CRunDec::mOS2mMSrun(double mOS, RunDecPair mq[], double asmu, 
+// Function: double CRunDec::mOS2mMSrun(double mOS, std::pair<double,double>* mq, double asmu, 
 //                           double mu, int nl)
-double CRunDec::mOS2mMSrun(double mOS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mOS2mMSrun(double mOS, std::pair<double,double>* mq, double asmu, double mu,
 			   int nl){
      double asM=0.0;
      asM= this-> AlphasExact(asmu, mu, mOS, nl);
@@ -1276,9 +1285,9 @@ double CRunDec::mOS2mMSrun(double mOS, RunDecPair mq[], double asmu, double mu,
      return newM;       
 }
 
-// Function: double CRunDec::mMS2mOSrun(double mMS, RunDecPair mq[], double asmu, 
+// Function: double CRunDec::mMS2mOSrun(double mMS, std::pair<double,double>* mq, double asmu, 
 //                           double mu, int nl)
-double CRunDec::mMS2mOSrun(double mMS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mMS2mOSrun(double mMS, std::pair<double,double>* mq, double asmu, double mu,
 			   int nl){
      double mNeu = mMS2mSI(mMS, asmu, mu, nl);
      double asmNeu = AlphasExact(asmu, mu, mNeu, nl);
@@ -1321,7 +1330,7 @@ double CRunDec::mMS2mRI(double mMS, double asmu, int nl){
 }
 
 // Coefficients needed for the transformation of mOS to mMSit
-double CRunDec::fHelpmOS2mMSit(double mMS, double mOS, RunDecPair mq[], double asmu,
+double CRunDec::fHelpmOS2mMSit(double mMS, double mOS, std::pair<double,double>* mq, double asmu,
                                 double mu, int nl){
      double sum[4];
      double deltalight = deltamMS2mOS(mMS,mq,asmu/Pi,mu,Nf-1,nl);
@@ -1343,9 +1352,9 @@ double CRunDec::fHelpmOS2mMSit(double mMS, double mOS, RunDecPair mq[], double a
      return erg;
 }
 
-// Function: double CRunDec::mOS2mMSit(double mOS, RunDecPair mq[], double asmu, 
+// Function: double CRunDec::mOS2mMSit(double mOS, std::pair<double,double>* mq, double asmu, 
 //                          double mu, int nl)
-double CRunDec::mOS2mMSit(double mOS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mOS2mMSit(double mOS, std::pair<double,double>* mq, double asmu, double mu,
                            int nl){
      if(nl<0||nl>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nl<<" LOOPS"<<endl;
@@ -1402,8 +1411,8 @@ double CRunDec::PSdelta(double asmu, double muf, double mu, int nl, int nloops) 
 	 return delta;
 }
 
-// Function: double CRunDec::mOS2mPS(double mOS, RunDecPair mq[], double asmu, double mu, double muf, int nl, int nloops)
-double CRunDec::mOS2mPS(double mOS, RunDecPair mq[], double asmu, double mu, double muf, int nl, int nloops) {
+// Function: double CRunDec::mOS2mPS(double mOS, std::pair<double,double>* mq, double asmu, double mu, double muf, int nl, int nloops)
+double CRunDec::mOS2mPS(double mOS, std::pair<double,double>* mq, double asmu, double mu, double muf, int nl, int nloops) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
        RETURN
@@ -1412,9 +1421,9 @@ double CRunDec::mOS2mPS(double mOS, RunDecPair mq[], double asmu, double mu, dou
 	 return mOS - muf*PSdelta(asmu/Pi, muf, mu, nl, nloops);
 }
 
-// Function: double CRunDec::mMS2mPS(double mMS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mMS2mPS(double mMS, std::pair<double,double>* mq, double asmu,
 //                                   double mu, double muf, int nl, int nloops, double fdelm)
-double CRunDec::mMS2mPS(double mMS, RunDecPair mq[], double asmu,
+double CRunDec::mMS2mPS(double mMS, std::pair<double,double>* mq, double asmu,
                         double mu, double muf, int nl, int nloops, double fdelm) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1426,9 +1435,9 @@ double CRunDec::mMS2mPS(double mMS, RunDecPair mq[], double asmu,
      return (exmOS - muf*delmuf);
 }
 
-// Function: double CRunDec::mPS2mMS(double mPS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mPS2mMS(double mPS, std::pair<double,double>* mq, double asmu,
 //                                   double mu, double muf, int nl, int nloops, double fdelm)
-double CRunDec::mPS2mMS(double mPS, RunDecPair mq[], double asmu,
+double CRunDec::mPS2mMS(double mPS, std::pair<double,double>* mq, double asmu,
                         double mu, double muf, int nl, int nloops, double fdelm) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1471,10 +1480,10 @@ double CRunDec::mPS2mMS(double mPS, RunDecPair mq[], double asmu,
      return 0.0;
 }
 
-// Function: double CRunDec::mPS2mSI(double mPS, RunDecPair mq[],
+// Function: double CRunDec::mPS2mSI(double mPS, std::pair<double,double>* mq,
 //                                   double (*as)(double), double muf, int nl, int nloops, double fdelm)
 // The function pointer passed should contain the adress of a function computing alpha_s in dependence of mu
-double CRunDec::mPS2mSI(double mPS, RunDecPair mq[],
+double CRunDec::mPS2mSI(double mPS, std::pair<double,double>* mq,
                         double (*as)(double), double muf, int nl, int nloops, double fdelm) {
     if(as == NULL) {
       cout << "Pointer to as == NULL! Aborting..." << endl;
@@ -1544,9 +1553,9 @@ double CRunDec::E1p(double mOS, double asmu, double mu, int nl, int nloops) {
 	 return -E*(4.*asmu*asmu*mOS)/9.;
 }
 
-// Function: double CRunDec::mOS2m1S(double mOS, RunDecPair mq[],
+// Function: double CRunDec::mOS2m1S(double mOS, std::pair<double,double>* mq,
 //                                   double asmu, double mu, int nl, int nloops)
-double CRunDec::mOS2m1S(double mOS, RunDecPair mq[], double asmu, double mu, int nl, int nloops) {
+double CRunDec::mOS2m1S(double mOS, std::pair<double,double>* mq, double asmu, double mu, int nl, int nloops) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
        RETURN
@@ -1554,9 +1563,9 @@ double CRunDec::mOS2m1S(double mOS, RunDecPair mq[], double asmu, double mu, int
 	 return mOS + 0.5*E1p(mOS, asmu, mu, nl, nloops);
 }
 
-// Function: double CRunDec::mMS2m1S(double mMS, RunDecPair mq[],
+// Function: double CRunDec::mMS2m1S(double mMS, std::pair<double,double>* mq,
 //                                   double asmu, double mu, int nl, int nloops, double fdelm)
-double CRunDec::mMS2m1S(double mMS, RunDecPair mq[],
+double CRunDec::mMS2m1S(double mMS, std::pair<double,double>* mq,
                         double asmu, double mu, int nl, int nloops, double fdelm) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1706,9 +1715,9 @@ double CRunDec::mMS2m1S(double mMS, RunDecPair mq[],
      return m1S;  
 }
 
-// Function: double CRunDec::m1S2mMS(double m1S, RunDecPair mq[],
+// Function: double CRunDec::m1S2mMS(double m1S, std::pair<double,double>* mq,
 //                                   double asmu, double mu, int nl, int nloops, double fdelm)
-double CRunDec::m1S2mMS(double m1S, RunDecPair mq[],
+double CRunDec::m1S2mMS(double m1S, std::pair<double,double>* mq,
                         double asmu, double mu, int nl, int nloops, double fdelm) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1746,10 +1755,10 @@ double CRunDec::m1S2mMS(double m1S, RunDecPair mq[],
      return 0.0;
 }
 
-// Function: double CRunDec::m1S2mSI(double m1S, RunDecPair mq[],
+// Function: double CRunDec::m1S2mSI(double m1S, std::pair<double,double>* mq,
 //                                   double (*as)(double), int nl, int nloops, double fdelm)
 // The function pointer passed should contain the adress of a function computing alpha_s in dependence of mu
-double CRunDec::m1S2mSI(double m1S, RunDecPair mq[],
+double CRunDec::m1S2mSI(double m1S, std::pair<double,double>* mq,
                         double (*as)(double), int nl, int nloops, double fdelm) {
     if(as == NULL) {
       cout << "Pointer to as == NULL! Aborting..." << endl;
@@ -1911,9 +1920,9 @@ double CRunDec::exOS2RSp(double api, double mmu, double nnuf, int nnl, int nloop
 	 return res;
 }
 
-// Function: CRunDec::mOS2mRS(double mOS, RunDecPair mq[], double asmu,
+// Function: CRunDec::mOS2mRS(double mOS, std::pair<double,double>* mq, double asmu,
 //                            double mu, double nuf, int nl, int nloops, bool prime)
-double CRunDec::mOS2mRS(double mOS, RunDecPair mq[], double asmu,
+double CRunDec::mOS2mRS(double mOS, std::pair<double,double>* mq, double asmu,
                         double mu, double nuf, int nl, int nloops, bool prime) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1926,9 +1935,9 @@ double CRunDec::mOS2mRS(double mOS, RunDecPair mq[], double asmu,
      }
 }
 
-// Function: double CRunDec::mMS2mRS(double mMS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mMS2mRS(double mMS, std::pair<double,double>* mq, double asmu,
 //                                   double mu, double nuf, int nl, int nloops, double fdelm, bool prime)
-double CRunDec::mMS2mRS(double mMS, RunDecPair mq[], double asmu,
+double CRunDec::mMS2mRS(double mMS, std::pair<double,double>* mq, double asmu,
                         double mu, double nuf, int nl, int nloops, double fdelm, bool prime) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1941,9 +1950,9 @@ double CRunDec::mMS2mRS(double mMS, RunDecPair mq[], double asmu,
      }
 }
 
-// Function: double CRunDec::mRS2mMS(double mRS, RunDecPair mq[], double asmu,
+// Function: double CRunDec::mRS2mMS(double mRS, std::pair<double,double>* mq, double asmu,
 //                                   double mu, double muf, int nl, int nloops, double fdelm, bool prime)
-double CRunDec::mRS2mMS(double mRS, RunDecPair mq[], double asmu,
+double CRunDec::mRS2mMS(double mRS, std::pair<double,double>* mq, double asmu,
                         double mu, double muf, int nl, int nloops, double fdelm, bool prime) {
      if(nloops<0||nloops>4){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops<<" LOOPS"<<endl;
@@ -1981,10 +1990,10 @@ double CRunDec::mRS2mMS(double mRS, RunDecPair mq[], double asmu,
      return 0.0;
 }
 
-// Function: double CRunDec::mRS2mSI(double mRS, RunDecPair mq[], double (*as)(double),
+// Function: double CRunDec::mRS2mSI(double mRS, std::pair<double,double>* mq, double (*as)(double),
 //                                   double muf, int nl, int nloops, double fdelm, bool prime)
 // The function pointer passed should contain the adress of a function computing alpha_s in dependence of mu
-double CRunDec::mRS2mSI(double mRS, RunDecPair mq[], double (*as)(double),
+double CRunDec::mRS2mSI(double mRS, std::pair<double,double>* mq, double (*as)(double),
                         double muf, int nl, int nloops, double fdelm, bool prime) {
     if(as == NULL) {
       cout << "Pointer to as == NULL! Aborting..." << endl;
@@ -3162,22 +3171,27 @@ double CRunDec::mkin2mMSD(double mkin, double apinlmus, double mus, double mufac
     return mMS;
 }
 
-// Function: double CRunDec::mMS2mKIN(double mMS, RunDecPair mq[],
-//                                    double asmus, double mus, double muf, int nl, int nloops, int deccase)
-double CRunDec::mMS2mKIN(double mMS, RunDecPair mq[],
-                         double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, int deccase) {
+// Function: double CRunDec::mMS2mKIN(double mMS, std::pair<double,double>* mq,
+//                                    double asmus, double mus, double muf, int nl, int nloops, std::string deccase)
+double CRunDec::mMS2mKIN(double mMS, std::pair<double,double>* mq,
+                         double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, std::string deccase) {
      if(nloops<0||nloops>3){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops <<" LOOPS"<<endl;
        RETURN  
      }
      double mkin;
-
-     if ( deccase < 0 || deccase > 3){
+     int decc = 0;
+     if(deccase == "A") decc = 0;
+     else if(deccase == "B") decc = 1;
+     else if(deccase == "C") decc = 2;
+     else if(deccase == "D") decc = 3;
+     else if(deccase == "") decc = 4;
+     else {
        cout<<"DECCASE "<< deccase <<" NOT IMPLEMENTED"<<endl;
        RETURN       
-     } 
+     }
      
-     switch(deccase) {
+     switch(decc) {
        case 0:
            mkin = mMS2mkinA(mMS, asmus/Pi, mus, muf, nlmsos, nloskin, mq[0].first, mq[0].second, nloops);
            break;
@@ -3197,32 +3211,38 @@ double CRunDec::mMS2mKIN(double mMS, RunDecPair mq[],
      return mkin;
 }
 
-double CRunDec::mMS2mKIN(double mMS, RunDecPair mq[], double asmus, double mus, double muf, int nloops, int deccase) {
-     if(deccase == 0) return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
-     else if(deccase == 1) return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
-     else if(deccase == 2) return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 4, nloops, deccase);
-     else if(deccase == 3) return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+double CRunDec::mMS2mKIN(double mMS, std::pair<double,double>* mq, double asmus, double mus, double muf, int nloops, std::string deccase) {
+     if(deccase == "A") return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+     else if(deccase == "B") return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+     else if(deccase == "C") return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 4, nloops, deccase);
+     else if(deccase == "D") return mMS2mKIN(mMS, mq, asmus, mus, muf, 3, 3, nloops, deccase);
      else {
        cout<<"DECCASE "<< deccase <<" NOT IMPLEMENTED"<<endl;
        RETURN       
      }
 }
 
-// Function: double CRunDec::mKIN2mMS(double mKIN, RunDecPair mq[],
+// Function: double CRunDec::mKIN2mMS(double mKIN, std::pair<double,double>* mq,
 //                                    double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, std::string deccase)
-double CRunDec::mKIN2mMS(double mKIN, RunDecPair mq[],
-                         double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, int deccase) {
+double CRunDec::mKIN2mMS(double mKIN, std::pair<double,double>* mq,
+                         double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, std::string deccase) {
      if(nloops<0||nloops>3){
        cout<<"PROCEDURE IS NOT IMPLEMENTED FOR "<< nloops <<" LOOPS"<<endl;
        RETURN  
      }
      double mMS;
-     if( deccase < 0 || deccase > 3) {
+     int decc = 0;
+     if(deccase == "A") decc = 0;
+     else if(deccase == "B") decc = 1;
+     else if(deccase == "C") decc = 2;
+     else if(deccase == "D") decc = 3;
+     else if(deccase == "") decc = 4;
+     else {
        cout<<"DECCASE "<< deccase <<" NOT IMPLEMENTED"<<endl;
        RETURN       
      }
      
-     switch(deccase) {
+     switch(decc) {
        case 0:
            mMS = mkin2mMSA(mKIN, asmus/Pi, mus, muf, nlmsos, nloskin, mq[0].first, mq[0].second, nloops);
            break;
@@ -3242,11 +3262,11 @@ double CRunDec::mKIN2mMS(double mKIN, RunDecPair mq[],
      return mMS;
 }
 
-double CRunDec::mKIN2mMS(double mKIN, RunDecPair mq[], double asmus, double mus, double muf, int nloops, int deccase) {
-     if(deccase == 0) return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
-     else if(deccase == 1) return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
-     else if(deccase == 2) return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 4, nloops, deccase);
-     else if(deccase == 3) return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+double CRunDec::mKIN2mMS(double mKIN, std::pair<double,double>* mq, double asmus, double mus, double muf, int nloops, std::string deccase) {
+     if(deccase == "A") return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+     else if(deccase == "B") return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
+     else if(deccase == "C") return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 4, nloops, deccase);
+     else if(deccase == "D") return mKIN2mMS(mKIN, mq, asmus, mus, muf, 3, 3, nloops, deccase);
      else {
        cout<<"DECCASE "<< deccase <<" NOT IMPLEMENTED"<<endl;
        RETURN       
@@ -3910,7 +3930,7 @@ double CRunDec::DecLambdaUp(double lam, double massth, int nl,
 
 // Function double CRunDec::AlL2AlH(double asl, double mu1, TriplenfMmu decpar[],
 //                          double mu2, int nl)
-double CRunDec::AlL2AlH(double asl, double mu1, TriplenfMmu *decpar, double mu2, 
+double CRunDec::AlL2AlH(double asl, double mu1, TriplenfMmu decpar[], double mu2, 
                          int nl){
      int n=0;
      int help;
@@ -4174,13 +4194,13 @@ AsmMS CRunDec::AsmMSrunexact(double mMu, double AlphaS0, double Mu0,
      return (this->AsmMSrunexact(mMu, AlphaS0, Mu0, MuEnd, nl));
 }
 
-double CRunDec::mMS2mOS(double mMS, RunDecPair mq[], double asmu, double mu,int nf,
+double CRunDec::mMS2mOS(double mMS, std::pair<double,double>* mq, double asmu, double mu,int nf,
                            int nl, double fdelm){
      SetConstants(nf);
      return (this->mMS2mOS(mMS, mq, asmu, mu, nl, fdelm));
 } 
   
-double CRunDec::mOS2mMS(double mOS, RunDecPair mq[], double asmu, double Mu,int nf,
+double CRunDec::mOS2mMS(double mOS, std::pair<double,double>* mq, double asmu, double Mu,int nf,
                            int nl, double fdelm){
      SetConstants(nf);
      return (this->mOS2mMS(mOS, mq, asmu, Mu, nl, fdelm));
@@ -4206,19 +4226,19 @@ double CRunDec::mRGI2mMS(double mRGI, double asmu,int nf, int nl){
      return (this->mRGI2mMS(mRGI, asmu, nl));
 }
   
-double CRunDec::mOS2mSI(double mOS, RunDecPair mq[], double asM,int nf, int nl, double fdelm){
+double CRunDec::mOS2mSI(double mOS, std::pair<double,double>* mq, double asM,int nf, int nl, double fdelm){
      SetConstants(nf);
      return (this->mOS2mSI(mOS, mq, asM, nl, fdelm));
 }
 
  
-double CRunDec::mOS2mMSrun(double mOS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mOS2mMSrun(double mOS, std::pair<double,double>* mq, double asmu, double mu,
                               int nf, int nl){
      SetConstants(nf);
      return (this->mOS2mMSrun(mOS, mq, asmu, mu, nl));
 }
    
-double CRunDec::mMS2mOSrun(double mMS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mMS2mOSrun(double mMS, std::pair<double,double>* mq, double asmu, double mu,
                               int nf, int nl){
      SetConstants(nf);
      return (this->mMS2mOSrun(mMS, mq, asmu, mu, nl));
@@ -4229,7 +4249,7 @@ double CRunDec::mMS2mRI(double mMS, double asmu,int nf, int nl){
      return (this->mMS2mRI(mMS, asmu, nl));
 }
   
-double CRunDec::mOS2mMSit(double mOS, RunDecPair mq[], double asmu, double mu,
+double CRunDec::mOS2mMSit(double mOS, std::pair<double,double>* mq, double asmu, double mu,
                              int nf,int nl){
      SetConstants(nf);
      return (this->mOS2mMSit(mOS, mq, asmu, mu, nl));
@@ -4241,35 +4261,35 @@ double CRunDec::mMS2mRGImod(double mMS, double asmu,int nf, int nl){
 }       
 
 
-double CRunDec::mOS2mRS(double mOS, RunDecPair mq[], double asmu, double mu, double nuf, int nl, int nloops) {
+double CRunDec::mOS2mRS(double mOS, std::pair<double,double>* mq, double asmu, double mu, double nuf, int nl, int nloops) {
      return (this->mOS2mRS(mOS, mq, asmu, mu, nuf, nl, nloops, false));
 }
 
-double CRunDec::mOS2mRSp(double mOS, RunDecPair mq[], double asmu, double mu, double nuf, int nl, int nloops) {
+double CRunDec::mOS2mRSp(double mOS, std::pair<double,double>* mq, double asmu, double mu, double nuf, int nl, int nloops) {
      return (this->mOS2mRS(mOS, mq, asmu, mu, nuf, nl, nloops, true));
 }
 
-double CRunDec::mMS2mRS(double mMS, RunDecPair mq[], double asmu, double mu, double nuf, int nl, int nloops, double fdelm) {
+double CRunDec::mMS2mRS(double mMS, std::pair<double,double>* mq, double asmu, double mu, double nuf, int nl, int nloops, double fdelm) {
      return (this->mMS2mRS(mMS, mq, asmu, mu, nuf, nl, nloops, fdelm, false));
 }
 
-double CRunDec::mMS2mRSp(double mMS, RunDecPair mq[], double asmu, double mu, double nuf, int nl, int nloops, double fdelm) {
+double CRunDec::mMS2mRSp(double mMS, std::pair<double,double>* mq, double asmu, double mu, double nuf, int nl, int nloops, double fdelm) {
      return (this->mMS2mRS(mMS, mq, asmu, mu, nuf, nl, nloops, fdelm, true));
 }
 
-double CRunDec::mRS2mMS(double mRS, RunDecPair mq[], double asmu, double mu, double muf, int nl, int nloops, double fdelm) {
+double CRunDec::mRS2mMS(double mRS, std::pair<double,double>* mq, double asmu, double mu, double muf, int nl, int nloops, double fdelm) {
      return (this->mRS2mMS(mRS, mq, asmu, mu, muf, nl, nloops, fdelm, false));
 }
 
-double CRunDec::mRSp2mMS(double mRS, RunDecPair mq[], double asmu, double mu, double muf, int nl, int nloops, double fdelm) {
+double CRunDec::mRSp2mMS(double mRS, std::pair<double,double>* mq, double asmu, double mu, double muf, int nl, int nloops, double fdelm) {
      return (this->mRS2mMS(mRS, mq, asmu, mu, muf, nl, nloops, fdelm, true));
 }
 
-double CRunDec::mRS2mSI(double mRS, RunDecPair mq[], double (*as)(double), double muf, int nl, int nloops, double fdelm) {
+double CRunDec::mRS2mSI(double mRS, std::pair<double,double>* mq, double (*as)(double), double muf, int nl, int nloops, double fdelm) {
      return (this->mRS2mSI(mRS, mq, as, muf, nl, nloops, fdelm, false));
 }
 
-double CRunDec::mRSp2mSI(double mRS, RunDecPair mq[], double (*as)(double), double muf, int nl, int nloops, double fdelm) {
+double CRunDec::mRSp2mSI(double mRS, std::pair<double,double>* mq, double (*as)(double), double muf, int nl, int nloops, double fdelm) {
      return (this->mRS2mSI(mRS, mq, as, muf, nl, nloops, fdelm, true));
 }
 

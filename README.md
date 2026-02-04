@@ -59,3 +59,20 @@ The wrapper was generated with [SWIG](http://www.swig.org/).
 Binary wheels are provided via [PyPI](https://pypi.python.org/pypi/rundec) for Linux, macOS, and Windows (built with [GitHub Actions](https://github.com/features/actions)).
 
 Python 3.10+ is supported.
+
+## Updating CRunDec version
+
+To update to a new version of CRunDec:
+
+1. Replace the CRunDec source files in the `CRunDec3/` directory with the new version, renaming them to `CRunDec.cpp` and `CRunDec.h`
+
+2. Update `setup.py` to reference the correct source files
+
+3. Check if `rundec.i` needs updates for any API changes (e.g., new types, changed function signatures)
+
+4. Regenerate the wrapper and test:
+   ```bash
+   make
+   pip install -e .
+   pytest test/
+   ```

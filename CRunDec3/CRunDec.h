@@ -80,18 +80,6 @@ struct TriplenfMmu{
     double muth;
 };
 
-//RunDecPair mq[]
-//! Structure containing: the number the mass of the heavy quark (first) and its scale (second)
-/*!
-  This structure is used to pass information on decoupling thresholds.
-  This substitutes the original argument pair<double,double>* mq and facilitate the interface to python.
-*/
-struct RunDecPair{
-    double first;
-    double second;
-};
-
-
 
 //! Structure containing: \f$\alpha_s^{(n_f)}\f$ (Asexact) and \f$m_{MS}^{(n_f)}\f$ (mMSexact)
 /*!
@@ -118,20 +106,20 @@ class CRunDec
 {
 private: 
     // Aux. constants for implicit Runge-Kutta-Procedure:
-    double a2=0.2, a3=0.3, a4=0.6, a5=1., a6=0.875;
+    const double a2=0.2, a3=0.3, a4=0.6, a5=1., a6=0.875;
        
-    double b21=0.2, b31=3./40., b32=9./40., b41=0.3, b42=-0.9, 
+    const double b21=0.2, b31=3./40., b32=9./40., b41=0.3, b42=-0.9, 
                  b43=6./5.;
-    double b51=-11./54., b52=2.5, b53=-70./27., b54=35./27.;
-    double b61=1631./55296., b62=175./512., b63=575./13824.;
-    double b64=44275./110592., b65=253./4096.;
+    const double b51=-11./54., b52=2.5, b53=-70./27., b54=35./27.;
+    const double b61=1631./55296., b62=175./512., b63=575./13824.;
+    const double b64=44275./110592., b65=253./4096.;
        
-    double c1=37./378., c2=0., c3=250./621., c4=125./594., c5=0.;
-    double c6= 512./1771.;
+    const double c1=37./378., c2=0., c3=250./621., c4=125./594., c5=0.;
+    const double c6= 512./1771.;
        
-    double dc1=37./378.-2825./27648., dc2=0.-0., 
+    const double dc1=37./378.-2825./27648., dc2=0.-0., 
                  dc3=250./621.-18575./48384.;
-    double dc4=125./594.-13525./55296., dc5=0.-277./14336., 
+    const double dc4=125./594.-13525./55296., dc5=0.-277./14336., 
                  dc6=512./1771.-0.25;
   
     // Coefficients for diff. equations:
@@ -172,9 +160,9 @@ private:
     double fMsFromOs4(double mu, double M, double nl, double err);
     double fZmM(double n);
     double fZmInvM(double n);
-    double deltamOS2mMS(double mOS, RunDecPair mq[],
+    double deltamOS2mMS(double mOS, std::pair<double,double>* mq,
                         double asmu, double mu, int nlq, int nloops); 
-    double deltamMS2mOS(double mMS, RunDecPair mq[],
+    double deltamMS2mOS(double mMS, std::pair<double,double>* mq,
                         double asmu, double mu, int nlq, int nloops); 
     double fMsFromRi1(void);
     double fMsFromRi2(void);
@@ -185,7 +173,7 @@ private:
     double fMumFromOs4(double err);
     double fRiFromMs(double alpha, double nl);
     double fMsFromRi(double alpha, double nl);
-    double fHelpmOS2mMSit(double mMS,double mOS, RunDecPair mq[],
+    double fHelpmOS2mMSit(double mMS,double mOS, std::pair<double,double>* mq,
                           double asmu, double mu, int nl);
     double fas5to6os(double alpha, double mass, double mu, double nlq, double nl);
     double fas6to5os(double alpha, double mass, double mu, double nlq, double nl);
@@ -204,7 +192,7 @@ private:
     double E1p(double mOS, double asmu, double mu, int nl, int nloops);
     double exOS2RS(double api, double mmu, double nnuf, int nnl, int nloops);
     double exOS2RSp(double api, double mmu, double nnuf, int nnl, int nloops);
-    double mMS2mOSmod(double mMS, RunDecPair mq[],
+    double mMS2mOSmod(double mMS, std::pair<double,double>* mq,
                       double asmu, double mu, int nf, int nloops, double err);
     double mkin2mMSA(double mkin, double apinlmus, double mus, double mufac, int NLMSOS, int NLOSKIN, double mcMSmusmcin, double musmcin, int nloops);
     double mkin2mMSB(double mkin, double apinlmus, double mus, double mufac, int NLMSOS, int NLOSKIN, double mcMSmusmcin, double musmcin, int nloops);
@@ -228,8 +216,7 @@ public:
     CRunDec(int);
   
     // Arrays and structs to store data:
-    //std::pair<double,double> mq[4];
-    RunDecPair mq[4];
+    std::pair<double,double> mq[4];
     TriplenfMmu nfMmu[4];
     AsmMS AM;
   
@@ -492,7 +479,7 @@ public:
         \param nloops number of loops
         \return \f$\alpha_s(\mu_2)\f$
     */
-    double AlL2AlH(double asl, double mu1, TriplenfMmu *decpar, double mu2, int nloops);
+    double AlL2AlH(double asl, double mu1, TriplenfMmu decpar[], double mu2, int nloops);
 
     //! AlH2AlL calculates \f$\alpha_s(\mu_2)\f$ from \f$\alpha_s(\mu_1)\f$ decoupling at intermediate scales, running from high to low
     /*!
@@ -545,7 +532,7 @@ public:
         \return \f$M_{OS}\f$
     */
 
-    double mMS2mOS(double mMS, RunDecPair mq[],
+    double mMS2mOS(double mMS, std::pair<double,double>* mq,
                    double asmu, double mu,int nf, int nloops, double fdelm=1.0);
 
     //! mOS2mMS calculates \f$m_{MS}^{(n_f)}(\mu)\f$ from \f$M_{OS}\f$
@@ -559,7 +546,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_f)}(\mu)\f$
     */
-    double mOS2mMS(double mOS, RunDecPair mq[],
+    double mOS2mMS(double mOS, std::pair<double,double>* mq,
                    double asmu, double mu,int nf, int nloops, double fdelm=1.0);
 
     //! mMS2mSI calculates \f$m_{MS}^{(n_f)}(m_{MS})\f$ from \f$m_{MS}^{(n_f)}(\mu)\f$
@@ -615,7 +602,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_f)}(m_{MS})\f$
     */
-    double mOS2mSI(double mOS, RunDecPair mq[],
+    double mOS2mSI(double mOS, std::pair<double,double>* mq,
                    double asM, int nf, int nloops, double fdelm=1.0);
 
     //! mOS2mMSrun calculates \f$m_{MS}^{(n_f)}(\mu)\f$ from \f$M_{OS}\f$
@@ -630,7 +617,7 @@ public:
         \param nloops number of loops
         \return \f$m_{MS}^{(n_f)}(\mu)\f$
     */ 
-    double mOS2mMSrun(double mOS, RunDecPair mq[],
+    double mOS2mMSrun(double mOS, std::pair<double,double>* mq,
                       double asmu, double mu,int nf, int nloops);
 
     //! mMS2mOSrun calculates \f$M_{OS}\f$ from \f$m_{MS}^{(n_f)}(\mu)\f$
@@ -645,7 +632,7 @@ public:
         \param nloops number of loops
         \return \f$M_{OS}\f$
     */  
-    double mMS2mOSrun(double mMS, RunDecPair mq[],
+    double mMS2mOSrun(double mMS, std::pair<double,double>* mq,
                       double asmu, double mu,int nf, int nloops);
 
     //! mMS2mRI calculates \f$m^{RI}(\mu)\f$ from \f$m_{MS}^{(n_f)}(\mu)\f$
@@ -670,7 +657,7 @@ public:
         \param nloops number of loops
         \return \f$m_{MS}^{(n_f)}(\mu)\f$
     */  
-    double mOS2mMSit(double mOS, RunDecPair mq[],
+    double mOS2mMSit(double mOS, std::pair<double,double>* mq,
                      double asmu, double mu, int nf, int nloops);
 
     //! mMS2mRGImod calculates \f$m^{RGI}\f$ from \f$m_{MS}^{(n_f)}(\mu)\f$
@@ -697,7 +684,7 @@ public:
         \param nloops number of loops
         \return \f$m^{PS}(\mu_f)\f$
     */ 
-    double mOS2mPS(double mOS, RunDecPair mq[],
+    double mOS2mPS(double mOS, std::pair<double,double>* mq,
                    double asmu, double mu, double muf, int nl, int nloops);
 
     //! mMS2mPS calculates \f$m^{PS}(\mu_f)\f$ from \f$m_{MS}^{(n_l+1)}(\mu)\f$
@@ -712,7 +699,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m^{PS}(\mu_f)\f$
     */
-    double mMS2mPS(double mMS, RunDecPair mq[],
+    double mMS2mPS(double mMS, std::pair<double,double>* mq,
                    double asmu, double mu, double muf, int nl, int nloops, double fdelm=1.0);
 
     //! mPS2mMS calculates \f$m_{MS}^{(n_l+1)}(\mu)\f$ from \f$m^{PS}(\mu_f)\f$
@@ -727,7 +714,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(\mu)\f$
     */
-    double mPS2mMS(double mPS, RunDecPair mq[],
+    double mPS2mMS(double mPS, std::pair<double,double>* mq,
                    double asmu, double mu, double muf, int nl, int nloops, double fdelm=1.0);
 
     //! mPS2mSI calculates \f$m_{MS}^{(n_l+1)}(m_{MS})\f$ from \f$m^{PS}(\mu_f)\f$
@@ -741,7 +728,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(m_{MS})\f$
     */
-    double mPS2mSI(double mPS, RunDecPair mq[],
+    double mPS2mSI(double mPS, std::pair<double,double>* mq,
                    double (*as)(double), double muf, int nl, int nloops, double fdelm=1.0);
 
     //! mOS2m1S calculates \f$m^{1S}\f$ from \f$M_{OS}\f$
@@ -754,7 +741,7 @@ public:
         \param nloops number of loops
         \return \f$m^{1S}\f$
     */ 
-    double mOS2m1S(double mOS, RunDecPair mq[],
+    double mOS2m1S(double mOS, std::pair<double,double>* mq,
                    double asmu, double mu, int nl, int nloops);
 
     //! mMS2m1S calculates \f$m^{1S}\f$ from \f$m_{MS}^{(n_l+1)}(\mu)\f$
@@ -768,7 +755,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m^{1S}\f$
     */
-    double mMS2m1S(double mMS, RunDecPair mq[],
+    double mMS2m1S(double mMS, std::pair<double,double>* mq,
                    double asmu, double mu, int nl, int nloops, double fdelm=1.0);
 
     //! m1S2mMS calculates \f$m_{MS}^{(n_l+1)}(\mu)\f$ from \f$m^{1S}\f$
@@ -782,7 +769,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(\mu)\f$
     */
-    double m1S2mMS(double m1S, RunDecPair mq[],
+    double m1S2mMS(double m1S, std::pair<double,double>* mq,
                    double asmu, double mu, int nl, int nloops, double fdelm=1.0);
 
     //! m1S2mSI calculates \f$m_{MS}^{(n_l+1)}(m_{MS})\f$ from \f$m^{1S}\f$
@@ -795,7 +782,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(m_{MS})\f$
     */
-    double m1S2mSI(double m1S, RunDecPair mq[],
+    double m1S2mSI(double m1S, std::pair<double,double>* mq,
                    double (*as)(double), int nl, int nloops, double fdelm=1.0);
 
     //! mOS2mRS calculates \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$ from \f$M_{OS}\f$
@@ -812,7 +799,7 @@ public:
         \param prime selects if \f$m^{RS}\f$ or \f$m^{RS'}\f$ should be calculated
         \return \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$
     */ 
-    double mOS2mRS(double mOS, RunDecPair mq[], double asmu,
+    double mOS2mRS(double mOS, std::pair<double,double>* mq, double asmu,
                    double mu, double nuf, int nl, int nloops, bool prime);
 
     //! mMS2mRS calculates \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$ from \f$m_{MS}^{(n_l+1)}(\mu)\f$
@@ -830,7 +817,7 @@ public:
         \param prime selects if \f$m^{RS}\f$ or \f$m^{RS'}\f$ should be calculated
         \return \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$
     */ 
-    double mMS2mRS(double mMS, RunDecPair mq[], double asmu,
+    double mMS2mRS(double mMS, std::pair<double,double>* mq, double asmu,
                    double mu, double nuf, int nl, int nloops, double fdelm, bool prime);
 
     //! mRS2mMS calculates \f$m_{MS}^{(n_l+1)}(\mu)\f$ from \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$
@@ -848,7 +835,7 @@ public:
         \param prime selects if \f$m^{RS}\f$ or \f$m^{RS'}\f$ is given
         \return \f$m_{MS}^{(n_l+1)}(\mu)\f$
     */ 
-    double mRS2mMS(double mRS, RunDecPair mq[], double asmu,
+    double mRS2mMS(double mRS, std::pair<double,double>* mq, double asmu,
                    double mu, double nuf, int nl, int nloops, double fdelm, bool prime);
 
     //! mRS2mSI calculates \f$m_{MS}^{(n_l+1)}(m_{MS})\f$ from \f$m^{RS}(\nu_f)\f$ or \f$m^{RS'}(\nu_f)\f$
@@ -865,7 +852,7 @@ public:
         \param prime selects if \f$m^{RS}\f$ or \f$m^{RS'}\f$ is given
         \return \f$m_{MS}^{(n_l+1)}(m_{MS})\f$
     */
-    double mRS2mSI(double mRS, RunDecPair mq[], double (*as)(double),
+    double mRS2mSI(double mRS, std::pair<double,double>* mq, double (*as)(double),
                    double nuf, int nl, int nloops, double fdelm, bool prime);
 
 
@@ -881,7 +868,7 @@ public:
         \param nloops number of loops
         \return \f$m^{RS}(\nu_f)\f$
     */ 
-    double mOS2mRS(double mOS, RunDecPair mq[],
+    double mOS2mRS(double mOS, std::pair<double,double>* mq,
                    double asmu, double mu, double nuf, int nl, int nloops);
 
     //! mMS2mRS calculates \f$m^{RS}(\nu_f)\f$ from \f$m_{MS}^{(n_l+1)}(\mu)\f$
@@ -897,7 +884,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m^{RS}(\nu_f)\f$
     */ 
-    double mMS2mRS(double mMS, RunDecPair mq[],
+    double mMS2mRS(double mMS, std::pair<double,double>* mq,
                    double asmu, double mu, double nuf, int nl, int nloops, double fdelm=1.0);
 
     //! mRS2mMS calculates \f$m_{MS}^{(n_l+1)}(\mu)\f$ from \f$m^{RS}(\nu_f)\f$
@@ -913,7 +900,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(\mu)\f$
     */ 
-    double mRS2mMS(double mRS, RunDecPair mq[],
+    double mRS2mMS(double mRS, std::pair<double,double>* mq,
                    double asmu, double mu, double nuf, int nl, int nloops, double fdelm=1.0);
 
     //! mRS2mSI calculates \f$m_{MS}^{(n_l+1)}(m_{MS})\f$ from \f$m^{RS}(\nu_f)\f$
@@ -928,7 +915,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(m_{MS})\f$
     */
-    double mRS2mSI(double mRS, RunDecPair mq[],
+    double mRS2mSI(double mRS, std::pair<double,double>* mq,
                    double (*as)(double), double nuf, int nl, int nloops, double fdelm=1.0);
 
     //! mOS2mRSp calculates \f$m^{RS'}(\nu_f)\f$ from \f$M_{OS}\f$
@@ -943,7 +930,7 @@ public:
         \param nloops number of loops
         \return \f$m^{RS'}(\nu_f)\f$
     */ 
-    double mOS2mRSp(double mOS, RunDecPair mq[],
+    double mOS2mRSp(double mOS, std::pair<double,double>* mq,
                     double asmu, double mu, double nuf, int nl, int nloops);
 
     //! mMS2mRSp calculates \f$m^{RS'}(\nu_f)\f$ from \f$m_{MS}^{(n_l+1)}(\mu)\f$
@@ -959,7 +946,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m^{RS'}(\nu_f)\f$
     */ 
-    double mMS2mRSp(double mMS, RunDecPair mq[],
+    double mMS2mRSp(double mMS, std::pair<double,double>* mq,
                     double asmu, double mu, double nuf, int nl, int nloops, double fdelm=1.0);
 
     //! mRSp2mMS calculates \f$m_{MS}^{(n_l+1)}(\mu)\f$ from \f$m^{RS'}(\nu_f)\f$
@@ -975,7 +962,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(\mu)\f$
     */ 
-    double mRSp2mMS(double mRS, RunDecPair mq[],
+    double mRSp2mMS(double mRS, std::pair<double,double>* mq,
                     double asmu, double mu, double nuf, int nl, int nloops, double fdelm=1.0);
 
     //! mRSp2mSI calculates \f$m_{MS}^{(n_l+1)}(m_{MS})\f$ from \f$m^{RS'}(\nu_f)\f$
@@ -990,7 +977,7 @@ public:
         \param fdelm factor multiplying the non-logarithmic part of the 4-loop term
         \return \f$m_{MS}^{(n_l+1)}(m_{MS})\f$
     */
-    double mRSp2mSI(double mRS, RunDecPair mq[],
+    double mRSp2mSI(double mRS, std::pair<double,double>* mq,
                     double (*as)(double), double nuf, int nl, int nloops, double fdelm=1.0);
 
 
@@ -1009,8 +996,8 @@ public:
         \param deccase Specify if there is a light but massive quark
         \return \f$m^{\mathrm{kin}}\f$
     */ 
-    double mMS2mKIN(double mMS, RunDecPair mq[],
-                    double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, int deccase);
+    double mMS2mKIN(double mMS, std::pair<double,double>* mq,
+                    double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, std::string deccase);
 
     //! mKIN2mMS calculates \f$m_{MS}^{(n_f)}(\mu_s)\f$ from \f$m^{\mathrm{kin}}\f$
 
@@ -1026,8 +1013,8 @@ public:
         \param deccase Specify if there is a light but massive quark
         \return \f$m_{MS}^{(n_f)}(\mu_s)\f$
     */ 
-    double mKIN2mMS(double mKIN, RunDecPair mq[],
-                    double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, int deccase);
+    double mKIN2mMS(double mKIN, std::pair<double,double>* mq,
+                    double asmus, double mus, double muf, int nlmsos, int nloskin, int nloops, std::string deccase);
   
     // Overload functions:
     double LamExpl(double asmu, double mu, int nloops);
@@ -1053,28 +1040,28 @@ public:
     double DecMqDownSI(double mq, double asmu, double massth, double muth, int nloops);    
 
 
-    double mMS2mOS(double mMS, RunDecPair mq[],
+    double mMS2mOS(double mMS, std::pair<double,double>* mq,
                    double asmu, double mu, int nloops, double fdelm=1.0);
-    double mOS2mMS(double mOS, RunDecPair mq[],
+    double mOS2mMS(double mOS, std::pair<double,double>* mq,
                    double asmu, double mu, int nloops, double fdelm=1.0);
 
     double mMS2mSI(double mMS, double asmu, double mu, int nloops);
     double mRI2mMS(double mRI, double asmu, int nloops);
     double mMS2mRGI(double mMS, double asmu, int nloops);
     double mRGI2mMS(double mRGI, double asmu, int nloops);
-    double mOS2mSI(double mOS, RunDecPair mq[],
+    double mOS2mSI(double mOS, std::pair<double,double>* mq,
                    double asM, int nloops, double fdelm=1.0);
-    double mOS2mMSrun(double mOS, RunDecPair mq[],
+    double mOS2mMSrun(double mOS, std::pair<double,double>* mq,
                       double asmu, double mu, int nloops);
-    double mMS2mOSrun(double mMS, RunDecPair mq[],
+    double mMS2mOSrun(double mMS, std::pair<double,double>* mq,
                       double asmu, double mu, int nloops);
     double mMS2mRI(double mMS, double asmu, int nloops);
-    double mOS2mMSit(double mOS, RunDecPair mq[],
+    double mOS2mMSit(double mOS, std::pair<double,double>* mq,
                      double asmu, double mu, int nloops); 
     double mMS2mRGImod(double mMS, double asmu, int nloops);
 
-    double mMS2mKIN(double mMS, RunDecPair mq[], double asmus, double mus, double muf, int nloops, int deccase);
-    double mKIN2mMS(double mKIN, RunDecPair mq[], double asmus, double mus, double muf, int nloops, int deccase);
+    double mMS2mKIN(double mMS, std::pair<double,double>* mq, double asmus, double mus, double muf, int nloops, std::string deccase);
+    double mKIN2mMS(double mKIN, std::pair<double,double>* mq, double asmus, double mus, double muf, int nloops, std::string deccase);
 
 };
 

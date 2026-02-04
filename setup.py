@@ -1,25 +1,35 @@
 from setuptools import setup, Extension
+import sys
 
-ext_mod = Extension("_rundec",
-                    sources=["_rundec.cc", "CRunDec3/CRunDec.3.1.cpp"],
-                    define_macros=[('Py_LIMITED_API', '0x030A0000')],
-                    py_limited_api=True,
-                    )
+# Windows requires _USE_MATH_DEFINES to get M_PI
+extra_compile_args = []
+if sys.platform == "win32":
+    extra_compile_args = ["/D_USE_MATH_DEFINES"]
 
-setup(name="rundec",
-      version="0.7",
-      author="David M. Straub",
-      author_email="david.straub@hm.edu",
-      url="https://github.com/DavidMStraub/rundec-python",
-      description="A Python wrapper around the CRunDec package for the "
-                  " running and decoupling of the strong coupling constant "
-                  "and quark masses",
-      long_description="""`CRunDec` is a C++ program developed by
+ext_mod = Extension(
+    "_rundec",
+    sources=["_rundec.cc", "CRunDec3/CRunDec.cpp"],
+    include_dirs=["CRunDec3"],
+    define_macros=[("Py_LIMITED_API", "0x030A0000")],
+    extra_compile_args=extra_compile_args,
+    py_limited_api=True,
+)
+
+setup(
+    name="rundec",
+    version="0.7",
+    author="David M. Straub",
+    author_email="david.straub@hm.edu",
+    url="https://github.com/DavidMStraub/rundec-python",
+    description="A Python wrapper around the CRunDec package for the "
+    " running and decoupling of the strong coupling constant "
+    "and quark masses",
+    long_description="""`CRunDec` is a C++ program developed by
       Florian Herren and Matthias Steinhauser. This Python package
       provides a thin wrapper around `CRunDec` generated with SWIG.""",
-      license="MIT",
-      py_modules=['rundec'],
-      ext_modules=[ext_mod],
-      extras_require={'testing': ['pytest']},
-      options={'bdist_wheel': {'py_limited_api': 'cp310'}},
-      )
+    license="MIT",
+    py_modules=["rundec"],
+    ext_modules=[ext_mod],
+    extras_require={"testing": ["pytest"]},
+    options={"bdist_wheel": {"py_limited_api": "cp310"}},
+)

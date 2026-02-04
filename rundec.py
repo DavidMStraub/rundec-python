@@ -118,32 +118,6 @@ class SwigPyIterator(object):
 
 # Register SwigPyIterator in _rundec:
 _rundec.SwigPyIterator_swigregister(SwigPyIterator)
-class PairDouble(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        _rundec.PairDouble_swiginit(self, _rundec.new_PairDouble(*args))
-    first = property(_rundec.PairDouble_first_get, _rundec.PairDouble_first_set)
-    second = property(_rundec.PairDouble_second_get, _rundec.PairDouble_second_set)
-    def __len__(self):
-        return 2
-    def __repr__(self):
-        return str((self.first, self.second))
-    def __getitem__(self, index): 
-        if not (index % 2):
-            return self.first
-        else:
-            return self.second
-    def __setitem__(self, index, val):
-        if not (index % 2):
-            self.first = val
-        else:
-            self.second = val
-    __swig_destroy__ = _rundec.delete_PairDouble
-
-# Register PairDouble in _rundec:
-_rundec.PairDouble_swigregister(PairDouble)
 class PairDoubleVector(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -249,6 +223,32 @@ class PairDoubleVector(object):
 
 # Register PairDoubleVector in _rundec:
 _rundec.PairDoubleVector_swigregister(PairDoubleVector)
+class RunDecPair(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        _rundec.RunDecPair_swiginit(self, _rundec.new_RunDecPair(*args))
+    first = property(_rundec.RunDecPair_first_get, _rundec.RunDecPair_first_set)
+    second = property(_rundec.RunDecPair_second_get, _rundec.RunDecPair_second_set)
+    def __len__(self):
+        return 2
+    def __repr__(self):
+        return str((self.first, self.second))
+    def __getitem__(self, index): 
+        if not (index % 2):
+            return self.first
+        else:
+            return self.second
+    def __setitem__(self, index, val):
+        if not (index % 2):
+            self.first = val
+        else:
+            self.second = val
+    __swig_destroy__ = _rundec.delete_RunDecPair
+
+# Register RunDecPair in _rundec:
+_rundec.RunDecPair_swigregister(RunDecPair)
 class TriplenfMmuArray(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -331,18 +331,6 @@ class TriplenfMmu(object):
 _rundec.TriplenfMmu_swigregister(TriplenfMmu)
 cvar = _rundec.cvar
 
-class RunDecPair(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    first = property(_rundec.RunDecPair_first_get, _rundec.RunDecPair_first_set)
-    second = property(_rundec.RunDecPair_second_get, _rundec.RunDecPair_second_set)
-
-    def __init__(self):
-        _rundec.RunDecPair_swiginit(self, _rundec.new_RunDecPair())
-    __swig_destroy__ = _rundec.delete_RunDecPair
-
-# Register RunDecPair in _rundec:
-_rundec.RunDecPair_swigregister(RunDecPair)
 class AsmMS(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
